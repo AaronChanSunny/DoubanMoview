@@ -26,4 +26,5 @@ public interface MoviesView extends View {
      * 隐藏进度条
      */
     void hideProgressBar();
+
 }

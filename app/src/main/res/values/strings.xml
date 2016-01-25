@@ -1,14 +1,10 @@
 <resources>
     <string name="app_name">豆瓣电影</string>
     <string name="action_settings">设置</string>
-    <string name="title_activity_splash">SpashActivity</string>
+    <string name="title_activity_movies">正在热映</string>
     <string name="title_activity_movie_detail">详情</string>
 
     <string name="welcome_text">欢迎使用豆瓣电影</string>
     <string name="network_error">网络异常，请稍后尝试。</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_main1111">MainActivity1111</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="refresh_list">刷新列表</string>
 </resources>

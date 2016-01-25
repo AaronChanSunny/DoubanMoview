@@ -1,7 +1,9 @@
 package com.aaron.doubanmovie.presenter;
 
 import android.content.Context;
+import android.view.View;
 
+import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.bus.EventBus;
 import com.aaron.doubanmovie.bus.event.DoubanApiExceptionEvent;
 import com.aaron.doubanmovie.bus.event.GetInTheatersSuccessEvent;
@@ -58,7 +60,9 @@ public class MoviesPresenterImpl implements MoviesPresenter {
     }
 
     @Override
-    public void onFabClick() {
+    public void onFabClick(View view) {
+        mView.showToast(mContext.getString(R.string.refresh_list));
+
         fetchMovies();
     }
 

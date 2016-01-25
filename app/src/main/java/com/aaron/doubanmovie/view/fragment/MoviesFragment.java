@@ -40,7 +40,7 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
 
     @OnClick(R.id.fab)
     void fabClick() {
-        mPresenter.onFabClick();
+        mPresenter.onFabClick(mMoviesRecycleView);
     }
 
     public static Fragment newInstance() {
@@ -64,6 +64,7 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
     @Override
     protected void initViews() {
         super.initViews();
+
         mMoviesRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mMoviesRecycleView.setAdapter(mMoviesAdapter);
     }
@@ -102,5 +103,5 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
     public void hideProgressBar() {
         mProgressBar.setVisibility(View.INVISIBLE);
     }
-    
+
 }

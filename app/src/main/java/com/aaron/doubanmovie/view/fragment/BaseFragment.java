@@ -3,6 +3,7 @@ package com.aaron.doubanmovie.view.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -22,12 +23,18 @@ import butterknife.ButterKnife;
  */
 public abstract class BaseFragment extends Fragment {
 
+    private ActionBar mSupportActionBar;
+
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
     protected abstract int getLayoutId();
 
     protected abstract void initInjection();
+
+    public ActionBar getSupportActionBar() {
+        return mSupportActionBar;
+    }
 
     @Nullable
     @Override
@@ -42,9 +49,12 @@ public abstract class BaseFragment extends Fragment {
         return view;
     }
 
-    protected void initViews() {
+    private void initViews() {
         if (mToolbar != null) {
-            ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+
+            activity.setSupportActionBar(mToolbar);
+            mSupportActionBar = activity.getSupportActionBar();
         } else {
             throw new RuntimeException(getActivity().toString()
                     + " must contain toolbar.");
