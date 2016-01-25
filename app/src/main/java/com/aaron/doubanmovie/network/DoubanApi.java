@@ -1,6 +1,7 @@
 package com.aaron.doubanmovie.network;
 
 import com.aaron.doubanmovie.model.InTheaters;
+import com.aaron.doubanmovie.model.Movie;
 
 import javax.inject.Inject;
 
@@ -27,6 +28,14 @@ public class DoubanApi {
 
     public Subscription getInTheaters(String city, Action1<? super InTheaters> response, Action1<Throwable> throwable) {
         Observable<InTheaters> call = mDoubanApiService.getInTheaters(city);
+
+        return call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response, throwable);
+    }
+
+    public Subscription getMovie(String id, Action1<? super Movie> response, Action1<Throwable> throwable) {
+        Observable<Movie> call = mDoubanApiService.getMovie(id);
 
         return call.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

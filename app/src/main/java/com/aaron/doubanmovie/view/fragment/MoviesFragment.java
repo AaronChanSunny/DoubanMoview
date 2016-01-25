@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.aaron.doubanmovie.App;
 import com.aaron.doubanmovie.R;
+import com.aaron.doubanmovie.bus.EventBus;
 import com.aaron.doubanmovie.di.component.DaggerMoviesFragmentComponent;
 import com.aaron.doubanmovie.di.module.MoviesFragmentModule;
 import com.aaron.doubanmovie.model.InTheaters;
@@ -25,6 +26,8 @@ import butterknife.Bind;
  */
 public class MoviesFragment extends BaseFragment implements MoviesView {
 
+    @Inject
+    EventBus mBus;
     @Inject
     MoviesPresenter mPresenter;
     @Inject
@@ -62,6 +65,13 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
     public void onResume() {
         super.onResume();
         mPresenter.fetchMovies();
+        mBus.register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mBus.unregister(this);
     }
 
     @Override
@@ -75,4 +85,5 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT)
                 .show();
     }
+
 }
