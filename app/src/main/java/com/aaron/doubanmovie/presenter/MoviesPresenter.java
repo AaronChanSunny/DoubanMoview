@@ -10,4 +10,8 @@ public interface MoviesPresenter extends Presenter {
      */
     void fetchMovies();
 
+    /**
+     * 处理Fab点击事件
+     */
+    void onFabClick();
 }

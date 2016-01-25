@@ -53,7 +53,13 @@ public class MoviesPresenterImpl implements MoviesPresenter {
 
     @Override
     public void fetchMovies() {
+        mView.showProgressBar();
         mDoubanApi.getInTheaters("福州");
+    }
+
+    @Override
+    public void onFabClick() {
+        fetchMovies();
     }
 
     @Subscribe
@@ -62,6 +68,7 @@ public class MoviesPresenterImpl implements MoviesPresenter {
 
         List<InTheaters.Movie> movies = event.mMovies;
         mView.refreshMovies(movies);
+        mView.hideProgressBar();
     }
 
     @Subscribe

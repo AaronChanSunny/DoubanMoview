@@ -1,8 +1,13 @@
 package com.aaron.doubanmovie.view.fragment;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.aaron.doubanmovie.App;
@@ -19,6 +24,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Git on 2016/1/23.
@@ -32,6 +39,13 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
 
     @Bind(R.id.recycle_view_movies)
     RecyclerView mRecycleViewMovies;
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
+
+    @OnClick(R.id.fab)
+    void fabClick() {
+        mPresenter.onFabClick();
+    }
 
     public static Fragment newInstance() {
         return new MoviesFragment();
@@ -83,4 +97,27 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
                 .show();
     }
 
+    @Override
+    public void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 }

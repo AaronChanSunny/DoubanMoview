@@ -24,7 +24,13 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_fragment);
+
         ButterKnife.bind(this);
+
+        initViews();
+    }
+
+    protected void initViews() {
         setSupportActionBar(mToolbar);
 
         FragmentManager fm = getSupportFragmentManager();
@@ -45,6 +51,9 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
             case R.id.action_settings:
                 return true;
             default:

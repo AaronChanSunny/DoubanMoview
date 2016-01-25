@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.model.InTheaters;
+import com.aaron.doubanmovie.view.activity.MovieDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String movieId = mMovies.get(getLayoutPosition()).getId();
+                    MovieDetailActivity.actionStart(mContext, movieId);
+                }
+            });
         }
 
     }

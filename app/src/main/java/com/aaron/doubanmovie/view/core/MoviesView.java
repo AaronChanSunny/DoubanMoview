@@ -16,4 +16,14 @@ public interface MoviesView extends View {
     void refreshMovies(List<InTheaters.Movie> movies);
 
     void showToast(String msg);
+
+    /**
+     * 显示进度条
+     */
+    void showProgressBar();
+
+    /**
+     * 隐藏进度条
+     */
+    void hideProgressBar();
 }
