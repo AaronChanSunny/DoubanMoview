@@ -24,11 +24,4 @@ public class MovieDetailActivity extends SingleFragmentActivity {
         return MovieDetailFragment.newInstance(movieId);
     }
 
-    @Override
-    protected void initViews() {
-        super.initViews();
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
 }

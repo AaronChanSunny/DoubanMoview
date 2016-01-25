@@ -3,16 +3,27 @@ package com.aaron.doubanmovie.view.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aaron.doubanmovie.R;
+
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * Created by Git on 2016/1/23.
  */
 public abstract class BaseFragment extends Fragment {
+
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
 
     protected abstract int getLayoutId();
 
@@ -32,13 +43,39 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected void initViews() {
-        // TODO: 2016/1/23
+        if (mToolbar != null) {
+            ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+        } else {
+            throw new RuntimeException(getActivity().toString()
+                    + " must contain toolbar.");
+        }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

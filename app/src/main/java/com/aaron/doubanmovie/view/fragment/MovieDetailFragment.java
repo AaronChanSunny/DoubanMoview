@@ -2,6 +2,7 @@ package com.aaron.doubanmovie.view.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -42,6 +43,9 @@ public class MovieDetailFragment extends BaseFragment {
     @Override
     protected void initViews() {
         super.initViews();
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar()
+                .setDisplayHomeAsUpEnabled(true);
 
         mText.setText(getArguments().getString(EXTRA_MOVIE_ID));
     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.aaron.doubanmovie"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="com.aaron.doubanmovie"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -28,15 +29,6 @@
         <activity
             android:name=".view.activity.MovieDetailActivity"
             android:label="@string/title_activity_movie_detail"
-            android:parentActivityName=".view.activity.MoviesActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.aaron.doubanmovie.view.activity.MoviesActivity"/>
-        </activity>
-        <activity
-            android:name=".view.activity.MainActivity"
-            android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
