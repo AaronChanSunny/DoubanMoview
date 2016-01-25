@@ -1,5 +1,6 @@
 package com.aaron.doubanmovie.di.module;
 
+import com.aaron.doubanmovie.bus.EventBus;
 import com.aaron.doubanmovie.di.scope.FragmentScope;
 import com.aaron.doubanmovie.network.DoubanApi;
 import com.aaron.doubanmovie.presenter.MoviesPresenter;
@@ -24,8 +25,8 @@ public class MoviesFragmentModule {
 
     @Provides
     @FragmentScope
-    MoviesPresenter provideMoviesPresenter(DoubanApi doubanApi) {
-        return new MoviesPresenterImpl(doubanApi, mFragment);
+    MoviesPresenter provideMoviesPresenter(DoubanApi doubanApi, EventBus bus) {
+        return new MoviesPresenterImpl(doubanApi, mFragment, bus);
     }
 
     @Provides

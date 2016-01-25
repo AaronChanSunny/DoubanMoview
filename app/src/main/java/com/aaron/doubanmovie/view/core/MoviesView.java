@@ -13,7 +13,7 @@ public interface MoviesView extends View {
      * 刷新电影列表
      * @param movies
      */
-    void updateRecycleViewMovies(List<InTheaters.Movie> movies);
+    void refreshMovies(List<InTheaters.Movie> movies);
 
     void showToast(String msg);
 }

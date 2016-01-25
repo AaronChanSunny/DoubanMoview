@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.aaron.doubanmovie.bus.EventBus;
 import com.aaron.doubanmovie.network.DoubanApi;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -77,7 +78,7 @@ public class DoubanApiModule {
 
     @Provides
     @Singleton
-    DoubanApi provideDoubanApi(Retrofit retrofit) {
-        return new DoubanApi(retrofit);
+    DoubanApi provideDoubanApi(Retrofit retrofit, EventBus bus) {
+        return new DoubanApi(retrofit, bus);
     }
 }

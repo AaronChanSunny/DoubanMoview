@@ -18,7 +18,7 @@ public class EventBus extends Bus {
         super(ThreadEnforcer.ANY);
     }
 
-    public void postOnMain(final Object event) {
+    public void postOnMainThread(final Object event) {
         if(Looper.myLooper() == Looper.getMainLooper()) {
             super.post(event);
         } else {

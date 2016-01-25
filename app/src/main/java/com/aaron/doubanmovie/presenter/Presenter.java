@@ -5,9 +5,9 @@ package com.aaron.doubanmovie.presenter;
  */
 public interface Presenter {
 
-    void pause();
-
     void resume();
+
+    void pause();
 
     void destroy();
 

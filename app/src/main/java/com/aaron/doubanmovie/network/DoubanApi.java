@@ -1,5 +1,9 @@
 package com.aaron.doubanmovie.network;
 
+import com.aaron.doubanmovie.bus.EventBus;
+import com.aaron.doubanmovie.bus.event.DoubanApiExceptionEvent;
+import com.aaron.doubanmovie.bus.event.GetInTheatersSuccessEvent;
+import com.aaron.doubanmovie.bus.event.GetMovieSuccessEvent;
 import com.aaron.doubanmovie.model.InTheaters;
 import com.aaron.doubanmovie.model.Movie;
 
@@ -7,7 +11,6 @@ import javax.inject.Inject;
 
 import retrofit2.Retrofit;
 import rx.Observable;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -18,27 +21,49 @@ import rx.schedulers.Schedulers;
 public class DoubanApi {
 
     private Retrofit mRetrofit;
+    private EventBus mBus;
     private DoubanApiService mDoubanApiService;
 
     @Inject
-    public DoubanApi(Retrofit retrofit) {
+    public DoubanApi(Retrofit retrofit, EventBus bus) {
         mRetrofit = retrofit;
+        mBus = bus;
         mDoubanApiService = mRetrofit.create(DoubanApiService.class);
     }
 
-    public Subscription getInTheaters(String city, Action1<? super InTheaters> response, Action1<Throwable> throwable) {
+    public void getInTheaters(String city) {
         Observable<InTheaters> call = mDoubanApiService.getInTheaters(city);
 
-        return call.subscribeOn(Schedulers.io())
+        call.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response, throwable);
+                .subscribe(new Action1<InTheaters>() {
+                    @Override
+                    public void call(InTheaters inTheaters) {
+                        mBus.post(new GetInTheatersSuccessEvent(inTheaters.getMovies()));
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        mBus.post(new DoubanApiExceptionEvent(new DoubanApiException(throwable)));
+                    }
+                });
     }
 
-    public Subscription getMovie(String id, Action1<? super Movie> response, Action1<Throwable> throwable) {
+    public void getMovie(String id) {
         Observable<Movie> call = mDoubanApiService.getMovie(id);
 
-        return call.subscribeOn(Schedulers.io())
+        call.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response, throwable);
+                .subscribe(new Action1<Movie>() {
+                    @Override
+                    public void call(Movie movie) {
+                        mBus.post(new GetMovieSuccessEvent(movie));
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        mBus.post(new DoubanApiExceptionEvent(new DoubanApiException(throwable)));
+                    }
+                });
     }
 }
