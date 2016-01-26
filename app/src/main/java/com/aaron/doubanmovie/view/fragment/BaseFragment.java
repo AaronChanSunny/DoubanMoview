@@ -53,7 +53,9 @@ public abstract class BaseFragment extends Fragment {
         if (mToolbar != null) {
             AppCompatActivity activity = (AppCompatActivity) getActivity();
 
+            // enable toolbar
             activity.setSupportActionBar(mToolbar);
+            // enable menu
             mSupportActionBar = activity.getSupportActionBar();
         } else {
             throw new RuntimeException(getActivity().toString()

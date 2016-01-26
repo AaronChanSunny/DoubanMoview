@@ -41,6 +41,7 @@ public class MoviesPresenterImpl implements MoviesPresenter {
     @Override
     public void resume() {
         mBus.register(this);
+        mView.initialize();
     }
 
     @Override

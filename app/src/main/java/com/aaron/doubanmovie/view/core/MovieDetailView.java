@@ -5,4 +5,7 @@ package com.aaron.doubanmovie.view.core;
  */
 public interface MovieDetailView extends View {
 
+    void setSummary(String summary);
+
+    void setBackDrop(String url);
 }

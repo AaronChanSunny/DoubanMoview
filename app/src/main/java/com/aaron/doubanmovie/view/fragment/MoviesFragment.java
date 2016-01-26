@@ -62,9 +62,7 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
-
+    public void initialize() {
         mMoviesRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mMoviesRecycleView.setAdapter(mMoviesAdapter);
     }
