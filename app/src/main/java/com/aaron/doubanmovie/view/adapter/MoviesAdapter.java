@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.model.InTheaters;
+import com.aaron.doubanmovie.util.StringUtil;
 import com.aaron.doubanmovie.view.activity.MovieDetailActivity;
 import com.squareup.picasso.Picasso;
 
@@ -57,43 +58,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         holder.mRatingBar.setRating(rating * holder.mRatingBar.getNumStars());
         holder.mRatingValue.setText(String.format("%.1f", rating));
 
-        String genres = getFormatGenres(movie.getGenres());
+        String genres = StringUtil.formatStringList(movie.getGenres());
         holder.mType.setText(genres);
 
-        String casts = getFormatCasts(movie.getCasts());
-        holder.mCasts.setText(casts);
+        List<String> casts = new ArrayList<>();
+        for (InTheaters.Movie.Cast cast : movie.getCasts()) {
+            casts.add(cast.getName());
+        }
+        holder.mCasts.setText(StringUtil.formatStringList(casts));
         
         String image = movie.getImages().getLarge();
         Picasso.with(mContext).load(image).into(holder.mImage);
-    }
-
-    private String getFormatCasts(List<InTheaters.Movie.Cast> casts) {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < casts.size(); i++) {
-            InTheaters.Movie.Cast cast = casts.get(i);
-            sb.append(cast.getName());
-
-            if (i != casts.size() - 1) {
-                sb.append(", ");
-            }
-    }
-
-        return sb.toString();
-    }
-
-    private String getFormatGenres(List<String> genres) {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < genres.size(); i++) {
-            sb.append(genres.get(i));
-
-            if (i != genres.size() - 1) {
-                sb.append(", ");
-            }
-        }
-
-        return sb.toString();
     }
 
     @Override

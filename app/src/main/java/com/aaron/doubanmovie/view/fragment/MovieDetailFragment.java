@@ -36,6 +36,10 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     ImageView mBackDrop;
     @Bind(R.id.collapsing_toolbar)
     CollapsingToolbarLayout mCollapsingToolbar;
+    @Bind(R.id.directors)
+    TextView mDirectors;
+    @Bind(R.id.casts)
+    TextView mCasts;
     @Bind(R.id.summary)
     TextView mSummary;
 
@@ -102,6 +106,16 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         Picasso.with(getActivity())
                 .load(url)
                 .into(mBackDrop);
+    }
+
+    @Override
+    public void setDirectors(String directors) {
+        mDirectors.setText(directors);
+    }
+
+    @Override
+    public void setCasts(String casts) {
+        mCasts.setText(casts);
     }
 
 }

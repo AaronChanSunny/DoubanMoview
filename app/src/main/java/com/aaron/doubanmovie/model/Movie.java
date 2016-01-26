@@ -108,7 +108,7 @@ public class Movie {
      */
 
     @SerializedName("casts")
-    private List<Casts> mCasts;
+    private List<Cast> mCasts;
     /**
      * avatars : {"small":"http://img3.douban.com/img/celebrity/small/1351678808.44.jpg","large":"http://img3.douban.com/img/celebrity/large/1351678808.44.jpg","medium":"http://img3.douban.com/img/celebrity/medium/1351678808.44.jpg"}
      * alt : http://movie.douban.com/celebrity/1276787/
@@ -217,7 +217,7 @@ public class Movie {
         this.mCountries = countries;
     }
 
-    public void setCasts(List<Casts> casts) {
+    public void setCasts(List<Cast> casts) {
         this.mCasts = casts;
     }
 
@@ -325,7 +325,7 @@ public class Movie {
         return mCountries;
     }
 
-    public List<Casts> getCasts() {
+    public List<Cast> getCasts() {
         return mCasts;
     }
 
@@ -413,7 +413,7 @@ public class Movie {
         }
     }
 
-    public static class Casts {
+    public static class Cast {
         /**
          * small : http://img3.doubanio.com/img/celebrity/small/51597.jpg
          * large : http://img3.doubanio.com/img/celebrity/large/51597.jpg

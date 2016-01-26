@@ -8,4 +8,9 @@ public interface MovieDetailView extends View {
     void setSummary(String summary);
 
     void setBackDrop(String url);
+
+    void setDirectors(String directors);
+
+    void setCasts(String casts);
+
 }

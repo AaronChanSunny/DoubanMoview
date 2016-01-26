@@ -6,8 +6,12 @@ import com.aaron.doubanmovie.bus.event.GetMovieSuccessEvent;
 import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.network.DoubanApi;
 import com.aaron.doubanmovie.util.Logger;
+import com.aaron.doubanmovie.util.StringUtil;
 import com.aaron.doubanmovie.view.core.MovieDetailView;
 import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -57,6 +61,18 @@ public class MovieDetailPresenterImpl implements MovieDetailPresenter {
         Movie movie = event.mMovie;
 
         mView.setBackDrop(movie.getImages().getLarge());
+
+        List<String> directories = new ArrayList<>();
+        for (Movie.Director director : movie.getDirectors()) {
+            directories.add(director.getName());
+        }
+        mView.setDirectors(StringUtil.formatStringList(directories));
+
+        List<String> casts = new ArrayList<>();
+        for (Movie.Cast cast : movie.getCasts()) {
+            casts.add(cast.getName());
+        }
+        mView.setCasts(StringUtil.formatStringList(casts));
         mView.setSummary(movie.getSummary());
     }
 
