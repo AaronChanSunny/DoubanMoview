@@ -14,6 +14,7 @@ import com.aaron.doubanmovie.view.core.MoviesView;
 import com.aaron.doubanmovie.view.fragment.MoviesFragment;
 import com.squareup.otto.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ public class MoviesPresenterImpl implements MoviesPresenter {
     private DoubanApi mDoubanApi;
     private MoviesView mView;
     private Context mContext;
+    private List<InTheaters.Movie> mMovies;
 
     @Inject
     public MoviesPresenterImpl(DoubanApi doubanApi, MoviesView view, EventBus bus) {
@@ -36,12 +38,12 @@ public class MoviesPresenterImpl implements MoviesPresenter {
         mView = view;
         mBus = bus;
         mContext = ((MoviesFragment)view).getActivity();
+        mMovies = new ArrayList<>();
     }
 
     @Override
     public void resume() {
         mBus.register(this);
-        mView.initialize();
     }
 
     @Override
@@ -56,6 +58,10 @@ public class MoviesPresenterImpl implements MoviesPresenter {
 
     @Override
     public void fetchMovies() {
+        if (mMovies.size() > 0) {
+            return;
+        }
+
         mView.showProgressBar();
         mDoubanApi.getInTheaters("福州");
     }
@@ -64,15 +70,17 @@ public class MoviesPresenterImpl implements MoviesPresenter {
     public void onFabClick(View view) {
         mView.showToast(mContext.getString(R.string.refresh_list));
 
-        fetchMovies();
+        mView.showProgressBar();
+        mDoubanApi.getInTheaters("福州");
     }
 
     @Subscribe
     public void getInTheatersSuccess(GetInTheatersSuccessEvent event) {
         logger.debug("get in_theaters movies success.");
 
-        List<InTheaters.Movie> movies = event.mMovies;
-        mView.refreshMovies(movies);
+        mMovies = event.mMovies;
+        mView.refreshMovies(mMovies);
+        mView.scrollRecycleViewTop();
         mView.hideProgressBar();
     }
 

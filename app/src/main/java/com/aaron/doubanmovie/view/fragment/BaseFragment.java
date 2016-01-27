@@ -49,7 +49,7 @@ public abstract class BaseFragment extends Fragment {
         return view;
     }
 
-    private void initViews() {
+    protected void initViews() {
         if (mToolbar != null) {
             AppCompatActivity activity = (AppCompatActivity) getActivity();
 

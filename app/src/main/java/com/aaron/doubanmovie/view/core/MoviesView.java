@@ -27,4 +27,5 @@ public interface MoviesView extends View {
      */
     void hideProgressBar();
 
+    void scrollRecycleViewTop();
 }

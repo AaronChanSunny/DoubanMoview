@@ -11,6 +11,7 @@ import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.di.component.DaggerMovieDetailFragmentComponent;
 import com.aaron.doubanmovie.di.module.MovieDetailFragmentModule;
 import com.aaron.doubanmovie.presenter.MovieDetailPresenter;
+import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.view.core.MovieDetailView;
 import com.squareup.picasso.Picasso;
 
@@ -22,6 +23,8 @@ import butterknife.Bind;
  * Created by OA on 2016/1/25.
  */
 public class MovieDetailFragment extends BaseFragment implements MovieDetailView {
+
+    private static final Logger logger = new Logger(MovieDetailFragment.class);
 
     private static final String EXTRA_MOVIE_ID = MovieDetailFragment.class.getName() + ".EXTRA_MOVIE_ID";
     private static final String EXTRA_MOVIE_TITLE = MovieDetailFragment.class.getName() + ".EXTRA_MOVIE_TITLE";
@@ -90,7 +93,8 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     }
 
     @Override
-    public void initialize() {
+    protected void initViews() {
+        super.initViews();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getSupportActionBar().setTitle(mTitle);

@@ -13,6 +13,7 @@ import com.aaron.doubanmovie.di.component.DaggerMoviesFragmentComponent;
 import com.aaron.doubanmovie.di.module.MoviesFragmentModule;
 import com.aaron.doubanmovie.model.InTheaters;
 import com.aaron.doubanmovie.presenter.MoviesPresenter;
+import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.view.adapter.MoviesAdapter;
 import com.aaron.doubanmovie.view.core.MoviesView;
 
@@ -27,6 +28,8 @@ import butterknife.OnClick;
  * Created by Git on 2016/1/23.
  */
 public class MoviesFragment extends BaseFragment implements MoviesView {
+
+    private static final Logger logger = new Logger(MoviesFragment.class);
 
     @Inject
     MoviesPresenter mPresenter;
@@ -62,7 +65,9 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
     }
 
     @Override
-    public void initialize() {
+    protected void initViews() {
+        super.initViews();
+
         mMoviesRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mMoviesRecycleView.setAdapter(mMoviesAdapter);
     }
@@ -100,6 +105,11 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
     @Override
     public void hideProgressBar() {
         mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void scrollRecycleViewTop() {
+        mMoviesRecycleView.scrollToPosition(0);
     }
 
 }

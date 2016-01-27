@@ -56,7 +56,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         float rating = (float) (average / max);
 
         holder.mRatingBar.setRating(rating * holder.mRatingBar.getNumStars());
-        holder.mRatingValue.setText(String.format("%.1f", rating));
+        holder.mRatingValue.setText(String.format("%.1f", average));
 
         String genres = StringUtil.formatStringList(movie.getGenres());
         holder.mType.setText(genres);
@@ -66,7 +66,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             casts.add(cast.getName());
         }
         holder.mCasts.setText(StringUtil.formatStringList(casts));
-        
+
         String image = movie.getImages().getLarge();
         Picasso.with(mContext).load(image).into(holder.mImage);
     }
