@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.model.InTheaters;
+import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.StringUtil;
 import com.aaron.doubanmovie.view.activity.MovieDetailActivity;
 import com.squareup.picasso.Picasso;
@@ -25,6 +26,8 @@ import butterknife.ButterKnife;
  * Created by Git on 2016/1/23.
  */
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
+
+    private static final Logger logger = new Logger(MoviesAdapter.class);
 
     private Context mContext;
     private List<InTheaters.Movie> mMovies;
@@ -67,8 +70,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         }
         holder.mCasts.setText(StringUtil.formatStringList(casts));
 
-        String image = movie.getImages().getLarge();
-        Picasso.with(mContext).load(image).into(holder.mImage);
+        String imageUrl = movie.getImages().getLarge();
+        Picasso.with(mContext).load(imageUrl).into(holder.mImage);
     }
 
     @Override
@@ -103,7 +106,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     InTheaters.Movie movie = mMovies.get(getLayoutPosition());
                     String movieId = movie.getId();
                     String title = movie.getTitle();
-                    MovieDetailActivity.actionStart(mContext, movieId, title);
+                    String imageUrl = movie.getImages().getLarge();
+                    MovieDetailActivity.actionStart(mContext, movieId, title, imageUrl, movie);
                 }
             });
         }

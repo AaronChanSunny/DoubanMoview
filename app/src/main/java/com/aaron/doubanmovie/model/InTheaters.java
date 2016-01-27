@@ -1,5 +1,8 @@
 package com.aaron.doubanmovie.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -83,7 +86,7 @@ public class InTheaters {
         return mMovies;
     }
 
-    public static class Movie {
+    public static class Movie implements Parcelable {
         /**
          * max : 10
          * average : 7.6
@@ -275,7 +278,7 @@ public class InTheaters {
             }
         }
 
-        public static class Images {
+        public static class Images implements Parcelable {
             @SerializedName("small")
             private String mSmall;
             @SerializedName("large")
@@ -306,9 +309,40 @@ public class InTheaters {
             public String getMedium() {
                 return mMedium;
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.mSmall);
+                dest.writeString(this.mLarge);
+                dest.writeString(this.mMedium);
+            }
+
+            public Images() {
+            }
+
+            protected Images(Parcel in) {
+                this.mSmall = in.readString();
+                this.mLarge = in.readString();
+                this.mMedium = in.readString();
+            }
+
+            public static final Creator<Images> CREATOR = new Creator<Images>() {
+                public Images createFromParcel(Parcel source) {
+                    return new Images(source);
+                }
+
+                public Images[] newArray(int size) {
+                    return new Images[size];
+                }
+            };
         }
 
-        public static class Cast {
+        public static class Cast implements Parcelable {
             /**
              * small : http://img6.douban.com/img/celebrity/small/3517.jpg
              * large : http://img6.douban.com/img/celebrity/large/3517.jpg
@@ -388,9 +422,36 @@ public class InTheaters {
                     return mMedium;
                 }
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.mName);
+            }
+
+            public Cast() {
+            }
+
+            protected Cast(Parcel in) {
+                this.mName = in.readString();
+            }
+
+            public static final Creator<Cast> CREATOR = new Creator<Cast>() {
+                public Cast createFromParcel(Parcel source) {
+                    return new Cast(source);
+                }
+
+                public Cast[] newArray(int size) {
+                    return new Cast[size];
+                }
+            };
         }
 
-        public static class Director {
+        public static class Director implements Parcelable {
             /**
              * small : http://img6.douban.com/img/celebrity/small/505.jpg
              * large : http://img6.douban.com/img/celebrity/large/505.jpg
@@ -470,6 +531,68 @@ public class InTheaters {
                     return mMedium;
                 }
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.mName);
+            }
+
+            public Director() {
+            }
+
+            protected Director(Parcel in) {
+                this.mName = in.readString();
+            }
+
+            public static final Creator<Director> CREATOR = new Creator<Director>() {
+                public Director createFromParcel(Parcel source) {
+                    return new Director(source);
+                }
+
+                public Director[] newArray(int size) {
+                    return new Director[size];
+                }
+            };
         }
+
+        public Movie() {
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.mTitle);
+            dest.writeParcelable(this.mImages, 0);
+            dest.writeString(this.mId);
+            dest.writeTypedList(mCasts);
+            dest.writeTypedList(mDirectors);
+        }
+
+        protected Movie(Parcel in) {
+            this.mTitle = in.readString();
+            this.mImages = in.readParcelable(Images.class.getClassLoader());
+            this.mId = in.readString();
+            this.mCasts = in.createTypedArrayList(Cast.CREATOR);
+            this.mDirectors = in.createTypedArrayList(Director.CREATOR);
+        }
+
+        public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+            public Movie createFromParcel(Parcel source) {
+                return new Movie(source);
+            }
+
+            public Movie[] newArray(int size) {
+                return new Movie[size];
+            }
+        };
     }
 }

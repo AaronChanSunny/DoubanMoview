@@ -14,7 +14,6 @@ import com.aaron.doubanmovie.view.core.MoviesView;
 import com.aaron.doubanmovie.view.fragment.MoviesFragment;
 import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,7 +37,6 @@ public class MoviesPresenterImpl implements MoviesPresenter {
         mView = view;
         mBus = bus;
         mContext = ((MoviesFragment)view).getActivity();
-        mMovies = new ArrayList<>();
     }
 
     @Override
@@ -58,7 +56,7 @@ public class MoviesPresenterImpl implements MoviesPresenter {
 
     @Override
     public void fetchMovies() {
-        if (mMovies.size() > 0) {
+        if (mMovies != null && mMovies.size() > 0) {
             return;
         }
 

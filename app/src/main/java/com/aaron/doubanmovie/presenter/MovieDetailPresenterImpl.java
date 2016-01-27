@@ -25,6 +25,7 @@ public class MovieDetailPresenterImpl implements MovieDetailPresenter {
     private DoubanApi mDoubanApi;
     private EventBus mBus;
     private MovieDetailView mView;
+    private Movie mMovie;
 
     @Inject
     public MovieDetailPresenterImpl(DoubanApi doubanApi, EventBus bus, MovieDetailView view) {
@@ -35,6 +36,12 @@ public class MovieDetailPresenterImpl implements MovieDetailPresenter {
 
     @Override
     public void fetchMovieDetail(String movieId) {
+        if (mMovie != null) {
+            return;
+        }
+
+        mView.showProgressBar();
+
         mDoubanApi.getMovie(movieId);
     }
 
@@ -57,22 +64,22 @@ public class MovieDetailPresenterImpl implements MovieDetailPresenter {
     public void getMovieSuccess(GetMovieSuccessEvent event) {
         logger.debug("fetch movie detail success.");
 
-        Movie movie = event.mMovie;
-
-        mView.setBackDrop(movie.getImages().getLarge());
+        mMovie = event.mMovie;
 
         List<String> directories = new ArrayList<>();
-        for (Movie.Director director : movie.getDirectors()) {
+        for (Movie.Director director : mMovie.getDirectors()) {
             directories.add(director.getName());
         }
         mView.setDirectors(StringUtil.formatStringList(directories));
 
         List<String> casts = new ArrayList<>();
-        for (Movie.Cast cast : movie.getCasts()) {
+        for (Movie.Cast cast : mMovie.getCasts()) {
             casts.add(cast.getName());
         }
         mView.setCasts(StringUtil.formatStringList(casts));
-        mView.setSummary(movie.getSummary());
+        mView.setSummary(mMovie.getSummary());
+
+        mView.hideProgressBar();
     }
 
     @Subscribe

@@ -3,17 +3,24 @@ package com.aaron.doubanmovie.view.fragment;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.App;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.di.component.DaggerMovieDetailFragmentComponent;
 import com.aaron.doubanmovie.di.module.MovieDetailFragmentModule;
+import com.aaron.doubanmovie.model.InTheaters;
 import com.aaron.doubanmovie.presenter.MovieDetailPresenter;
 import com.aaron.doubanmovie.util.Logger;
+import com.aaron.doubanmovie.util.StringUtil;
 import com.aaron.doubanmovie.view.core.MovieDetailView;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -26,14 +33,12 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
 
     private static final Logger logger = new Logger(MovieDetailFragment.class);
 
-    private static final String EXTRA_MOVIE_ID = MovieDetailFragment.class.getName() + ".EXTRA_MOVIE_ID";
-    private static final String EXTRA_MOVIE_TITLE = MovieDetailFragment.class.getName() + ".EXTRA_MOVIE_TITLE";
+    private static final String EXTRA_MOVIE = MovieDetailFragment.class.getName() + ".EXTRA_MOVIE";
 
     @Inject
     MovieDetailPresenter mPresenter;
 
-    private String mTitle;
-    private String mMovieId;
+    private InTheaters.Movie mMovie;
 
     @Bind(R.id.back_drop)
     ImageView mBackDrop;
@@ -45,11 +50,12 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     TextView mCasts;
     @Bind(R.id.summary)
     TextView mSummary;
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
 
-    public static Fragment newInstance(String movieId, String title) {
+    public static Fragment newInstance(InTheaters.Movie movie) {
         Bundle args = new Bundle();
-        args.putString(EXTRA_MOVIE_ID, movieId);
-        args.putString(EXTRA_MOVIE_TITLE, title);
+        args.putParcelable(EXTRA_MOVIE, movie);
 
         Fragment fragment = new MovieDetailFragment();
         fragment.setArguments(args);
@@ -61,15 +67,14 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMovieId = getArguments().getString(EXTRA_MOVIE_ID);
-        mTitle = getArguments().getString(EXTRA_MOVIE_TITLE);
+        mMovie = getArguments().getParcelable(EXTRA_MOVIE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mPresenter.resume();
-        mPresenter.fetchMovieDetail(mMovieId);
+        mPresenter.fetchMovieDetail(mMovie.getId());
     }
 
     @Override
@@ -97,19 +102,28 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
         super.initViews();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        getSupportActionBar().setTitle(mTitle);
+        getSupportActionBar().setTitle(mMovie.getTitle());
+
+        Picasso.with(getActivity())
+                .load(mMovie.getImages().getLarge())
+                .into(mBackDrop);
+
+        List<String> directories = new ArrayList<>();
+        for (InTheaters.Movie.Director director : mMovie.getDirectors()) {
+            directories.add(director.getName());
+        }
+        mDirectors.setText(StringUtil.formatStringList(directories));
+
+        List<String> casts = new ArrayList<>();
+        for (InTheaters.Movie.Cast cast : mMovie.getCasts()) {
+            casts.add(cast.getName());
+        }
+        mCasts.setText(StringUtil.formatStringList(casts));
     }
 
     @Override
     public void setSummary(String summary) {
         mSummary.setText(summary);
-    }
-
-    @Override
-    public void setBackDrop(String url) {
-        Picasso.with(getActivity())
-                .load(url)
-                .into(mBackDrop);
     }
 
     @Override
@@ -120,6 +134,16 @@ public class MovieDetailFragment extends BaseFragment implements MovieDetailView
     @Override
     public void setCasts(String casts) {
         mCasts.setText(casts);
+    }
+
+    @Override
+    public void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
 }
