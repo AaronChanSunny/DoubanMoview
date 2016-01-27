@@ -81,8 +81,8 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
 
     @Override
     public void onPause() {
-        super.onPause();
         mPresenter.pause();
+        super.onPause();
     }
 
     @Override
