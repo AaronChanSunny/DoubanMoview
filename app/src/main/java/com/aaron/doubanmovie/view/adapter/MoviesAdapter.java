@@ -71,7 +71,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         holder.mCasts.setText(StringUtil.formatStringList(casts));
 
         String imageUrl = movie.getImages().getLarge();
-        Picasso.with(mContext).load(imageUrl).into(holder.mImage);
+        Picasso.with(mContext)
+                .load(imageUrl)
+                .into(holder.mImage);
     }
 
     @Override
