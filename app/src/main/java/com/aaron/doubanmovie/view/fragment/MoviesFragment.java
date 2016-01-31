@@ -9,13 +9,18 @@ import android.widget.Toast;
 
 import com.aaron.doubanmovie.App;
 import com.aaron.doubanmovie.R;
+import com.aaron.doubanmovie.action.ActionCreator;
 import com.aaron.doubanmovie.di.component.DaggerMoviesFragmentComponent;
 import com.aaron.doubanmovie.di.module.MoviesFragmentModule;
+import com.aaron.doubanmovie.dispatcher.Dispatcher;
 import com.aaron.doubanmovie.model.InTheaters;
 import com.aaron.doubanmovie.presenter.MoviesPresenter;
+import com.aaron.doubanmovie.store.InTheatersStore;
+import com.aaron.doubanmovie.store.Store;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.view.adapter.MoviesAdapter;
 import com.aaron.doubanmovie.view.core.MoviesView;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -35,6 +40,13 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
     MoviesPresenter mPresenter;
     @Inject
     MoviesAdapter mMoviesAdapter;
+
+    @Inject
+    Dispatcher mDispatcher;
+    @Inject
+    ActionCreator mActionCreator;
+    @Inject
+    InTheatersStore mInTheatersStore;
 
     @Bind(R.id.progress_bar)
     ProgressBar mProgressBar;
@@ -62,6 +74,8 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
                 .moviesFragmentModule(new MoviesFragmentModule(this))
                 .build()
                 .inject(this);
+
+        mDispatcher.register(mInTheatersStore);
     }
 
     @Override
@@ -77,12 +91,27 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
         super.onResume();
         mPresenter.resume();
         mPresenter.fetchMovies();
+
+        mInTheatersStore.register(this);
+
+        mActionCreator.fetchMovies();
+    }
+
+    @Subscribe
+    public void onStoreChange(Store.StoreChangeEvent event) {
+        render(mInTheatersStore);
+    }
+
+    private void render(InTheatersStore inTheatersStore) {
+        logger.debug("title is " + inTheatersStore.getInTheaters().getTitle());
     }
 
     @Override
     public void onPause() {
         mPresenter.pause();
         super.onPause();
+
+        mInTheatersStore.unregister(this);
     }
 
     @Override
