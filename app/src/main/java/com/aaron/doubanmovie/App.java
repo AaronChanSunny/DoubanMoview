@@ -7,6 +7,7 @@ import com.aaron.doubanmovie.di.component.AppComponent;
 import com.aaron.doubanmovie.di.component.DaggerAppComponent;
 import com.aaron.doubanmovie.di.module.AppModule;
 import com.aaron.doubanmovie.di.module.DoubanApiModule;
+import com.facebook.stetho.Stetho;
 
 /**
  * Created by Git on 2016/1/23.
@@ -28,6 +29,8 @@ public class App extends Application {
         super.onCreate();
 
         initAppComponent();
+
+        Stetho.initializeWithDefaults(this);
     }
 
     private void initAppComponent() {
