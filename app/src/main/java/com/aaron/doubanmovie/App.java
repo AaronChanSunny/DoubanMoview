@@ -5,8 +5,8 @@ import android.content.Context;
 
 import com.aaron.doubanmovie.di.component.AppComponent;
 import com.aaron.doubanmovie.di.component.DaggerAppComponent;
+import com.aaron.doubanmovie.di.module.ApiModule;
 import com.aaron.doubanmovie.di.module.AppModule;
-import com.aaron.doubanmovie.di.module.DoubanApiModule;
 import com.facebook.stetho.Stetho;
 
 /**
@@ -36,7 +36,7 @@ public class App extends Application {
     private void initAppComponent() {
         mAppComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
-                .doubanApiModule(new DoubanApiModule("https://api.douban.com"))
+                .apiModule(new ApiModule("https://api.douban.com"))
                 .build();
     }
 

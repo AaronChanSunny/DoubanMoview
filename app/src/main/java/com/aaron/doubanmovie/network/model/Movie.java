@@ -1,4 +1,4 @@
-package com.aaron.doubanmovie.model;
+package com.aaron.doubanmovie.network.model;
 
 import com.google.gson.annotations.SerializedName;
 

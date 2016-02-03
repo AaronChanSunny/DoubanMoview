@@ -1,7 +1,7 @@
 package com.aaron.doubanmovie.di.module;
 
 
-import com.aaron.doubanmovie.dispatcher.Dispatcher;
+import com.aaron.doubanmovie.flux.dispatcher.Dispatcher;
 
 import javax.inject.Singleton;
 

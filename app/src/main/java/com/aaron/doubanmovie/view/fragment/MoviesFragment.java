@@ -9,20 +9,15 @@ import android.widget.Toast;
 
 import com.aaron.doubanmovie.App;
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.action.ActionCreator;
 import com.aaron.doubanmovie.di.component.DaggerMoviesFragmentComponent;
 import com.aaron.doubanmovie.di.module.MoviesFragmentModule;
-import com.aaron.doubanmovie.dispatcher.Dispatcher;
-import com.aaron.doubanmovie.model.InTheaters;
-import com.aaron.doubanmovie.presenter.MoviesPresenter;
-import com.aaron.doubanmovie.store.InTheatersStore;
-import com.aaron.doubanmovie.store.Store;
+import com.aaron.doubanmovie.flux.action.ActionsCreator;
+import com.aaron.doubanmovie.flux.dispatcher.Dispatcher;
+import com.aaron.doubanmovie.flux.store.MoviesStore;
+import com.aaron.doubanmovie.flux.store.Store;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.view.adapter.MoviesAdapter;
-import com.aaron.doubanmovie.view.core.MoviesView;
 import com.squareup.otto.Subscribe;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -32,21 +27,18 @@ import butterknife.OnClick;
 /**
  * Created by Git on 2016/1/23.
  */
-public class MoviesFragment extends BaseFragment implements MoviesView {
+public class MoviesFragment extends BaseFragment {
 
     private static final Logger logger = new Logger(MoviesFragment.class);
 
     @Inject
-    MoviesPresenter mPresenter;
-    @Inject
-    MoviesAdapter mMoviesAdapter;
-
-    @Inject
     Dispatcher mDispatcher;
     @Inject
-    ActionCreator mActionCreator;
+    ActionsCreator mActionCreator;
     @Inject
-    InTheatersStore mInTheatersStore;
+    MoviesStore mMoviesStore;
+    @Inject
+    MoviesAdapter mMoviesAdapter;
 
     @Bind(R.id.progress_bar)
     ProgressBar mProgressBar;
@@ -55,7 +47,9 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
 
     @OnClick(R.id.fab)
     void fabClick() {
-        mPresenter.onFabClick(mMoviesRecycleView);
+        Toast.makeText(getActivity(), R.string.refresh_list, Toast.LENGTH_SHORT)
+                .show();
+        fetchMovies();
     }
 
     public static Fragment newInstance() {
@@ -74,8 +68,6 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
                 .moviesFragmentModule(new MoviesFragmentModule(this))
                 .build()
                 .inject(this);
-
-        mDispatcher.register(mInTheatersStore);
     }
 
     @Override
@@ -89,55 +81,65 @@ public class MoviesFragment extends BaseFragment implements MoviesView {
     @Override
     public void onResume() {
         super.onResume();
-        mPresenter.resume();
-        mPresenter.fetchMovies();
 
-        mInTheatersStore.register(this);
+        mDispatcher.register(mMoviesStore);
+        mMoviesStore.register(this);
 
+        if (mMoviesStore.getMovies().size() == 0) {
+            fetchMovies();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mDispatcher.unregister(mMoviesStore);
+        mMoviesStore.unregister(this);
+    }
+
+    /**
+     * 从服务器拉取电影数据
+     */
+    private void fetchMovies() {
         mActionCreator.fetchMovies();
     }
 
     @Subscribe
     public void onStoreChange(Store.StoreChangeEvent event) {
-        render(mInTheatersStore);
+        render(mMoviesStore);
     }
 
-    private void render(InTheatersStore inTheatersStore) {
-        logger.debug("title is " + inTheatersStore.getInTheaters().getTitle());
+    /**
+     * 前端渲染
+     * @param moviesStore
+     */
+    private void render(MoviesStore moviesStore) {
+        logger.debug("movies size is " + moviesStore.getMovies().size());
+
+        renderProgressBar(mMoviesStore.isProgressBarShown());
+        refreshMovies();
     }
 
-    @Override
-    public void onPause() {
-        mPresenter.pause();
-        super.onPause();
-
-        mInTheatersStore.unregister(this);
-    }
-
-    @Override
-    public void refreshMovies(List<InTheaters.Movie> movies) {
-        mMoviesAdapter.setMovies(movies);
+    /**
+     * 刷新电影列表
+     */
+    private void refreshMovies() {
+        mMoviesAdapter.setMovies(mMoviesStore.getMovies());
         mMoviesAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void showToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT)
-                .show();
+    /**
+     * 是否显示进度条
+     */
+    private void renderProgressBar(boolean isShown) {
+        mProgressBar.setVisibility(isShown ? View.VISIBLE : View.INVISIBLE);
     }
 
-    @Override
-    public void showProgressBar() {
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgressBar() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void scrollRecycleViewTop() {
+    /**
+     * 返回列表顶部
+     */
+    private void scrollRecycleViewTop() {
         mMoviesRecycleView.scrollToPosition(0);
     }
 

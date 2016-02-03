@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
-import com.aaron.doubanmovie.model.InTheaters;
+import com.aaron.doubanmovie.network.model.InTheaters;
 import com.aaron.doubanmovie.view.fragment.MovieDetailFragment;
 
 public class MovieDetailActivity extends SingleFragmentActivity {

@@ -1,4 +1,4 @@
-package com.aaron.doubanmovie.action;
+package com.aaron.doubanmovie.flux.action;
 
 /**
  * Created by Aaron on 2016/1/31.

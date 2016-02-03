@@ -10,7 +10,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.model.InTheaters;
+import com.aaron.doubanmovie.network.model.InTheaters;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.StringUtil;
 import com.aaron.doubanmovie.view.activity.MovieDetailActivity;

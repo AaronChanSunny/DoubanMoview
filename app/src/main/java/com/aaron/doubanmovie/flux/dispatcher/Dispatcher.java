@@ -1,7 +1,7 @@
-package com.aaron.doubanmovie.dispatcher;
+package com.aaron.doubanmovie.flux.dispatcher;
 
-import com.aaron.doubanmovie.action.Action;
-import com.aaron.doubanmovie.store.Store;
+import com.aaron.doubanmovie.flux.action.Action;
+import com.aaron.doubanmovie.flux.store.Store;
 
 import java.util.ArrayList;
 import java.util.List;

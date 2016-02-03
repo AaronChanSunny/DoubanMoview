@@ -1,6 +1,6 @@
-package com.aaron.doubanmovie.store;
+package com.aaron.doubanmovie.flux.store;
 
-import com.aaron.doubanmovie.action.Action;
+import com.aaron.doubanmovie.flux.action.Action;
 import com.aaron.doubanmovie.bus.EventBus;
 
 /**
