@@ -39,16 +39,16 @@ public class MoviesStore extends Store {
     @Override
     public void onAction(Action action) {
         switch (action.getType()) {
-            case MoviesAction.ACTION_FETCH_MOVIES_SUCCESS:
-                mMovies = (List<InTheaters.Movie>) action.getData();
-
-                mIsLoaded = true;
-                break;
             case MoviesAction.ACTION_START_FETCH_MOVIES:
                 mIsProgressBarShown = true;
+                mIsLoaded = false;
+                break;
+            case MoviesAction.ACTION_FETCH_MOVIES_SUCCESS:
+                mMovies = (List<InTheaters.Movie>) action.getData();
                 break;
             case MoviesAction.ACTION_END_FETCH_MOVIES:
                 mIsProgressBarShown = false;
+                mIsLoaded = true;
                 break;
             default:
                 break;

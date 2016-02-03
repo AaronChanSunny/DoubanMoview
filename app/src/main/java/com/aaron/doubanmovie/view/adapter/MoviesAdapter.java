@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.network.model.InTheaters;
 import com.aaron.doubanmovie.util.Logger;
-import com.aaron.doubanmovie.util.StringUtil;
+import com.aaron.doubanmovie.util.MovieParser;
 import com.aaron.doubanmovie.view.activity.MovieDetailActivity;
 import com.squareup.picasso.Picasso;
 
@@ -61,14 +61,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         holder.mRatingBar.setRating(rating * holder.mRatingBar.getNumStars());
         holder.mRatingValue.setText(String.format("%.1f", average));
 
-        String genres = StringUtil.formatStringList(movie.getGenres());
+        String genres = MovieParser.parseGenres(movie.getGenres());
         holder.mType.setText(genres);
 
-        List<String> casts = new ArrayList<>();
-        for (InTheaters.Movie.Cast cast : movie.getCasts()) {
-            casts.add(cast.getName());
-        }
-        holder.mCasts.setText(StringUtil.formatStringList(casts));
+        String casts = MovieParser.parseCastsInTheaters(movie.getCasts());
+        holder.mCasts.setText(casts);
 
         String imageUrl = movie.getImages().getLarge();
         Picasso.with(mContext)
@@ -106,10 +103,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 @Override
                 public void onClick(View v) {
                     InTheaters.Movie movie = mMovies.get(getLayoutPosition());
-                    String movieId = movie.getId();
-                    String title = movie.getTitle();
-                    String imageUrl = movie.getImages().getLarge();
-                    MovieDetailActivity.actionStart(mContext, movieId, title, imageUrl, movie);
+                    MovieDetailActivity.actionStart(mContext, movie);
                 }
             });
         }
