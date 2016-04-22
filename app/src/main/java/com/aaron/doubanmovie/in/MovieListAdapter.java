@@ -1,4 +1,4 @@
-package com.aaron.doubanmovie.view.adapter;
+package com.aaron.doubanmovie.in;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,10 +10,9 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.network.model.InTheaters;
+import com.aaron.doubanmovie.api.model.InTheaters;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
-import com.aaron.doubanmovie.view.activity.MovieDetailActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -25,26 +24,27 @@ import butterknife.ButterKnife;
 /**
  * Created by Git on 2016/1/23.
  */
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
+public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> {
 
-    private static final Logger logger = new Logger(MoviesAdapter.class);
+    private static final Logger logger = new Logger(MovieListAdapter.class);
 
     private Context mContext;
     private List<InTheaters.Movie> mMovies;
 
-    public MoviesAdapter(Context context) {
+    public MovieListAdapter(Context context) {
         mContext = context;
         mMovies = new ArrayList<>();
     }
 
     public void setMovies(List<InTheaters.Movie> movies) {
-        mMovies = movies;
+        mMovies.clear();
+        mMovies.addAll(movies);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(mContext)
-                .inflate(R.layout.item_movie, parent, false);
+                .inflate(R.layout.item_in_movie_list, parent, false);
         return new ViewHolder(itemView);
     }
 

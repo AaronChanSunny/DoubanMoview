@@ -23,7 +23,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_movies"/>
+    <include layout="@layout/content_in_movie_list"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

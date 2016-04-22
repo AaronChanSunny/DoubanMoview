@@ -1,7 +1,8 @@
-package com.aaron.doubanmovie.network;
+package com.aaron.doubanmovie.api.retrofit;
 
-import com.aaron.doubanmovie.network.model.InTheaters;
-import com.aaron.doubanmovie.network.model.Movie;
+
+import com.aaron.doubanmovie.api.model.InTheaters;
+import com.aaron.doubanmovie.api.model.Movie;
 
 import retrofit2.http.GET;
 import retrofit2.http.Path;

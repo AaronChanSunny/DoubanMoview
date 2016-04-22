@@ -1,7 +1,8 @@
 package com.aaron.doubanmovie.util;
 
-import com.aaron.doubanmovie.network.model.InTheaters;
-import com.aaron.doubanmovie.network.model.Movie;
+
+import com.aaron.doubanmovie.api.model.InTheaters;
+import com.aaron.doubanmovie.api.model.Movie;
 
 import java.util.List;
 

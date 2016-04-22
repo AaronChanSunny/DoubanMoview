@@ -33,11 +33,11 @@ public class Logger implements Serializable {
     public void error(Throwable ex, boolean submitCrashReport) {
         LogUtil.error(this.tag, ex.getMessage(), ex);
 
-//        if (submitCrashReport
-//                && !BuildConfig.DEBUG
-//                &&  config.getFabricConfig().isEnabled()) {
-//            Crashlytics.logException(ex);
-//        }
+        /*if (submitCrashReport
+                && !BuildConfig.DEBUG
+                &&  config.getFabricConfig().isEnabled()) {
+            Crashlytics.logException(ex);
+        }*/
     }
 
     public void warn(String log) {

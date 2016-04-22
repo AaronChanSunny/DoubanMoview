@@ -1,4 +1,4 @@
-package com.aaron.doubanmovie.network.model;
+package com.aaron.doubanmovie.api.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

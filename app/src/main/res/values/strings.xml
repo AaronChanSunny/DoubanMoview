@@ -12,4 +12,5 @@
     <string name="movie_casts">演职表</string>
     <string name="movie_directors">导演:</string>
     <string name="movie_cast">主演:</string>
+    <string name="server_error">抱歉，服务器异常…</string>
 </resources>
