@@ -13,4 +13,8 @@
     <string name="movie_directors">导演:</string>
     <string name="movie_cast">主演:</string>
     <string name="server_error">抱歉，服务器异常…</string>
+    <string name="title_activity_home">首页</string>
+    <string name="title_fragment_in">正在热映</string>
+    <string name="title_fragment_soon">即将上映</string>
+    <string name="title_fragment_top">热榜经典</string>
 </resources>
