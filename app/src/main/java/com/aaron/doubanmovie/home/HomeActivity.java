@@ -1,6 +1,7 @@
 package com.aaron.doubanmovie.home;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,8 @@ public class HomeActivity extends AppCompatActivity {
     TabLayout mTab;
     @Bind(R.id.pager)
     ViewPager mPager;
+    @Bind(R.id.app_bar)
+    AppBarLayout mAppBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
