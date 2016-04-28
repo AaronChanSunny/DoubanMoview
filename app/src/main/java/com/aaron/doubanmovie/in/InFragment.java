@@ -65,8 +65,6 @@ public class InFragment extends Fragment {
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(getActivity(), R.string.refresh_list, Toast.LENGTH_SHORT).show();
-
                 fetchMovies();
             }
         });
@@ -131,7 +129,6 @@ public class InFragment extends Fragment {
     private void refreshMovies() {
         mSwipe.setRefreshing(true);
         mMoviesRecycleView.smoothScrollToPosition(0);
-        Toast.makeText(getActivity(), R.string.refresh_list, Toast.LENGTH_SHORT).show();
 
         fetchMovies();
     }

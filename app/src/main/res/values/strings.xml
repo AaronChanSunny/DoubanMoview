@@ -6,7 +6,6 @@
 
     <string name="welcome_text">欢迎使用豆瓣电影</string>
     <string name="network_error">网络异常，请稍后尝试。</string>
-    <string name="refresh_list">刷新列表</string>
     <string name="movie_type">类别：</string>
     <string name="movie_summary">剧情梗概</string>
     <string name="movie_casts">演职表</string>
