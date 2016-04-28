@@ -3,6 +3,7 @@ package com.aaron.doubanmovie.in;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +33,8 @@ public class InFragment extends Fragment {
 
     @Bind(R.id.list_movies)
     RecyclerView mMoviesRecycleView;
+    @Bind(R.id.swipe)
+    SwipeRefreshLayout mSwipe;
 
     private MovieListAdapter mAdapter;
     private Api mApi;
@@ -59,8 +62,27 @@ public class InFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_in, container, false);
         ButterKnife.bind(this, view);
 
+        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Toast.makeText(getActivity(), R.string.refresh_list, Toast.LENGTH_SHORT).show();
+
+                fetchMovies();
+            }
+        });
+
         mMoviesRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mMoviesRecycleView.setAdapter(mAdapter);
+
+        mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);
+        // SwipeRefreshLayout indicator does not appear when the setRefreshing(true) is called before the SwipeRefreshLayout.onMeasure()
+        // reference: http://stackoverflow.com/questions/26858692/swiperefreshlayout-setrefreshing-not-showing-indicator-initially
+        mSwipe.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipe.setRefreshing(true);
+            }
+        });
 
         fetchMovies();
 
@@ -93,6 +115,8 @@ public class InFragment extends Fragment {
                 .subscribe(new Action1<InTheaters>() {
                     @Override
                     public void call(InTheaters inTheaters) {
+                        mSwipe.setRefreshing(false);
+
                         mAdapter.setMovies(inTheaters.getMovies());
                         mAdapter.notifyDataSetChanged();
                     }
@@ -105,8 +129,9 @@ public class InFragment extends Fragment {
     }
 
     private void refreshMovies() {
-        Toast.makeText(getActivity(), R.string.refresh_list, Toast.LENGTH_SHORT).show();
+        mSwipe.setRefreshing(true);
         mMoviesRecycleView.smoothScrollToPosition(0);
+        Toast.makeText(getActivity(), R.string.refresh_list, Toast.LENGTH_SHORT).show();
 
         fetchMovies();
     }
