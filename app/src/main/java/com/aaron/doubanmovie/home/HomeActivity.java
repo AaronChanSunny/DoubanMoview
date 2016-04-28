@@ -4,15 +4,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.aaron.doubanmovie.R;
+import com.aaron.doubanmovie.in.InFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -25,6 +28,18 @@ public class HomeActivity extends AppCompatActivity {
     @Bind(R.id.app_bar)
     AppBarLayout mAppBar;
 
+    private HomePagerAdapter mPagerAdapter;
+
+    @OnClick(R.id.fab)
+    void fabClicked() {
+        String tag = mPagerAdapter.getFragmentTags().get(mTab.getSelectedTabPosition() + "");
+
+        Fragment currentFragment = getSupportFragmentManager().findFragmentByTag(tag);
+        if (currentFragment != null && currentFragment instanceof InFragment) {
+            ((InFragment) currentFragment).refreshMovies();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +51,8 @@ public class HomeActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
 
-        mPager.setAdapter(new HomePagerAdapter(getSupportFragmentManager(), this));
+        mPagerAdapter = new HomePagerAdapter(getSupportFragmentManager(), this);
+        mPager.setAdapter(mPagerAdapter);
         mTab.setupWithViewPager(mPager);
     }
 

@@ -19,7 +19,6 @@ import com.aaron.doubanmovie.util.Logger;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -42,11 +41,6 @@ public class InFragment extends Fragment {
 
     public static InFragment newInstance() {
         return new InFragment();
-    }
-
-    @OnClick(R.id.fab)
-    void fabClick() {
-        refreshMovies();
     }
 
     @Override
@@ -126,7 +120,7 @@ public class InFragment extends Fragment {
                 });
     }
 
-    private void refreshMovies() {
+    public void refreshMovies() {
         mSwipe.setRefreshing(true);
         mMoviesRecycleView.smoothScrollToPosition(0);
 
