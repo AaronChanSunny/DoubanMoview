@@ -27,20 +27,20 @@ import rx.schedulers.Schedulers;
 /**
  * Created by aaronchan on 16/4/27.
  */
-public class InFragment extends Fragment {
-    private static final Logger logger = new Logger(InFragment.class);
+public class InListFragment extends Fragment {
+    private static final Logger logger = new Logger(InListFragment.class);
 
     @Bind(R.id.list_movies)
     RecyclerView mMoviesRecycleView;
     @Bind(R.id.swipe)
     SwipeRefreshLayout mSwipe;
 
-    private MovieListAdapter mAdapter;
+    private InListAdapter mAdapter;
     private Api mApi;
     private Subscription mSubsInTheater;
 
-    public static InFragment newInstance() {
-        return new InFragment();
+    public static InListFragment newInstance() {
+        return new InListFragment();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class InFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_in, container, false);
+        View view = inflater.inflate(R.layout.fragment_in_list, container, false);
         ButterKnife.bind(this, view);
 
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -96,7 +96,7 @@ public class InFragment extends Fragment {
     }
 
     private void initData() {
-        mAdapter = new MovieListAdapter(getActivity());
+        mAdapter = new InListAdapter(getActivity());
         mApi = ApiImpl.getInstance(getActivity());
     }
 

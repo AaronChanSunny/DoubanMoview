@@ -7,9 +7,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.in.InFragment;
-import com.aaron.doubanmovie.soon.SoonFragment;
-import com.aaron.doubanmovie.top.TopFragment;
+import com.aaron.doubanmovie.in.InListFragment;
+import com.aaron.doubanmovie.soon.SoonListFragment;
+import com.aaron.doubanmovie.top.TopListFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,16 +44,16 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
         Fragment fragment;
         switch (position) {
             case 0:
-                fragment = InFragment.newInstance();
+                fragment = InListFragment.newInstance();
                 break;
             case 1:
-                fragment = SoonFragment.newInstance();
+                fragment = SoonListFragment.newInstance();
                 break;
             case 2:
-                fragment = TopFragment.newInstance();
+                fragment = TopListFragment.newInstance();
                 break;
             default:
-                fragment = InFragment.newInstance();
+                fragment = InListFragment.newInstance();
                 break;
         }
 

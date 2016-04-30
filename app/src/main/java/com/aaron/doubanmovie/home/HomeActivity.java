@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.in.InFragment;
+import com.aaron.doubanmovie.in.InListFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,8 +35,8 @@ public class HomeActivity extends AppCompatActivity {
         String tag = mPagerAdapter.getFragmentTags().get(mTab.getSelectedTabPosition() + "");
 
         Fragment currentFragment = getSupportFragmentManager().findFragmentByTag(tag);
-        if (currentFragment != null && currentFragment instanceof InFragment) {
-            ((InFragment) currentFragment).refreshMovies();
+        if (currentFragment != null && currentFragment instanceof InListFragment) {
+            ((InListFragment) currentFragment).refreshMovies();
         }
     }
 
