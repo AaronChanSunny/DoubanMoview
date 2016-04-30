@@ -21,6 +21,8 @@ import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Subscription;
@@ -135,12 +137,12 @@ public class InDetailActivity extends AppCompatActivity {
     }
 
     private void fetchPhotosHtml(String id) {
-        mApi.getMoviePhotosHtml(id)
+        mApi.getMoviePhotos(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
+                .subscribe(new Action1<List<String>>() {
                     @Override
-                    public void call(String s) {
+                    public void call(List<String> s) {
                         logger.debug("Photos html:\n" + s);
                     }
                 }, new Action1<Throwable>() {

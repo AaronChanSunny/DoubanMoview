@@ -5,6 +5,8 @@ import com.aaron.doubanmovie.api.gson.InTheater;
 import com.aaron.doubanmovie.api.gson.Top;
 import com.aaron.doubanmovie.model.Movie;
 
+import java.util.List;
+
 import rx.Observable;
 
 /**
@@ -19,5 +21,5 @@ public interface Api {
 
     Observable<Top> getTop(int start, int count);
 
-    Observable<String> getMoviePhotosHtml(String id);
+    Observable<List<String>> getMoviePhotos(String id);
 }
