@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +21,6 @@ import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,6 +41,7 @@ public class InDetailActivity extends AppCompatActivity {
     private Movie mMovieSelected;
     private Api mApi;
     private Subscription mSubsMovie;
+    private Subscription mSubsPhoto;
 
     @Bind(R.id.back_drop)
     ImageView mBackDrop;
@@ -76,22 +76,17 @@ public class InDetailActivity extends AppCompatActivity {
 
         String id = getIntent().getStringExtra(EXTRA_ID);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        // String imageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
-        String imageUrl = "https://img1.doubanio.com/view/photo/photo/public/p2323952737.jpg";
         String casts = getIntent().getStringExtra(EXTRA_CASTS);
 
         getSupportActionBar().setTitle(title);
-        Picasso.with(this)
-                .load(imageUrl)
-                .into(mBackDrop);
 
         mCasts.setText(casts);
 
         mApi = ApiImpl.getInstance(this);
 
-        fetchMovieDetail(id);
+        fetchMoviePhoto(id);
 
-        fetchPhotosHtml(id);
+        fetchMovieDetail(id);
     }
 
     @Override
@@ -108,6 +103,9 @@ public class InDetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         if (!mSubsMovie.isUnsubscribed()) {
             mSubsMovie.unsubscribe();
+        }
+        if (!mSubsPhoto.isUnsubscribed()) {
+            mSubsPhoto.unsubscribe();
         }
         super.onDestroy();
     }
@@ -136,20 +134,26 @@ public class InDetailActivity extends AppCompatActivity {
                 });
     }
 
-    private void fetchPhotosHtml(String id) {
-        mApi.getMoviePhotos(id)
+    private void fetchMoviePhoto(String id) {
+        mSubsPhoto = mApi.getRandomMoviePhoto(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<String>>() {
+                .subscribe(new Action1<String>() {
                     @Override
-                    public void call(List<String> s) {
-                        logger.debug("Photos html:\n" + s);
+                    public void call(String url) {
+                        loadBackDrop(TextUtils.isEmpty(url) ? getIntent().getStringExtra(EXTRA_IMAGE_URL) : url);
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        logger.error(throwable);
+                        Toast.makeText(InDetailActivity.this, R.string.server_error, Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void loadBackDrop(String url) {
+        Picasso.with(this)
+                .load(url)
+                .into(mBackDrop);
     }
 }
