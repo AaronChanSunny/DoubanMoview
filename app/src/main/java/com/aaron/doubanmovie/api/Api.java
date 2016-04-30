@@ -1,9 +1,9 @@
 package com.aaron.doubanmovie.api;
 
-import com.aaron.doubanmovie.api.model.ComingSoon;
-import com.aaron.doubanmovie.api.model.InTheaters;
-import com.aaron.doubanmovie.api.model.Movie;
-import com.aaron.doubanmovie.api.model.Top;
+import com.aaron.doubanmovie.api.gson.ComingSoon;
+import com.aaron.doubanmovie.api.gson.InTheater;
+import com.aaron.doubanmovie.api.gson.Top;
+import com.aaron.doubanmovie.model.Movie;
 
 import rx.Observable;
 
@@ -11,7 +11,7 @@ import rx.Observable;
  * Created by aaronchan on 16/4/22.
  */
 public interface Api {
-    Observable<InTheaters> getInTheaters(String city);
+    Observable<InTheater> getInTheaters(String city);
 
     Observable<Movie> getMovie(String id);
 

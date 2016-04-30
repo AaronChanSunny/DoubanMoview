@@ -1,10 +1,10 @@
 package com.aaron.doubanmovie.api.retrofit;
 
 
-import com.aaron.doubanmovie.api.model.ComingSoon;
-import com.aaron.doubanmovie.api.model.InTheaters;
-import com.aaron.doubanmovie.api.model.Movie;
-import com.aaron.doubanmovie.api.model.Top;
+import com.aaron.doubanmovie.api.gson.ComingSoon;
+import com.aaron.doubanmovie.api.gson.InTheater;
+import com.aaron.doubanmovie.api.gson.Top;
+import com.aaron.doubanmovie.model.Movie;
 
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -17,7 +17,7 @@ import rx.Observable;
 public interface ApiService {
 
     @GET("/v2/movie/in_theaters")
-    Observable<InTheaters> getInTheaters(@Query("city") String city);
+    Observable<InTheater> getInTheaters(@Query("city") String city);
 
     @GET("/v2/movie/subject/{id}")
     Observable<Movie> getMovie(@Path("id") String id);

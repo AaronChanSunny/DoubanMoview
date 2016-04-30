@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
 import com.aaron.doubanmovie.api.ApiImpl;
-import com.aaron.doubanmovie.api.model.InTheaters;
+import com.aaron.doubanmovie.api.gson.InTheater;
 import com.aaron.doubanmovie.util.Logger;
 
 import butterknife.Bind;
@@ -104,12 +104,12 @@ public class InListFragment extends Fragment {
         mSubsInTheater = mApi.getInTheaters("福州")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<InTheaters>() {
+                .subscribe(new Action1<InTheater>() {
                     @Override
-                    public void call(InTheaters inTheaters) {
+                    public void call(InTheater inTheater) {
                         mSwipe.setRefreshing(false);
 
-                        mAdapter.setMovies(inTheaters.getMovies());
+                        mAdapter.setMovies(inTheater.getMovies());
                         mAdapter.notifyDataSetChanged();
                     }
                 }, new Action1<Throwable>() {

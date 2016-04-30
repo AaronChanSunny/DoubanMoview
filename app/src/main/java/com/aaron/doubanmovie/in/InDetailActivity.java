@@ -16,14 +16,10 @@ import android.widget.Toast;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
 import com.aaron.doubanmovie.api.ApiImpl;
-import com.aaron.doubanmovie.api.model.InTheaters;
-import com.aaron.doubanmovie.api.model.Movie;
+import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,11 +30,14 @@ import rx.schedulers.Schedulers;
 
 public class InDetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MOVIE = InDetailActivity.class.getName() + ".EXTRA_MOVIE";
+    public static final String EXTRA_ID = InDetailActivity.class.getName() + ".EXTRA_ID";
+    public static final String EXTRA_TITLE = InDetailActivity.class.getName() + ".EXTRA_TITLE";
+    public static final String EXTRA_IMAGE_URL = InDetailActivity.class.getName() + ".EXTRA_IMAGE_URL";
+    public static final String EXTRA_CASTS = InDetailActivity.class.getName() + ".EXTRA_CASTS";
 
     private static final Logger logger = new Logger(InDetailActivity.class);
 
-    private InTheaters.Movie mMovieSelected;
+    private Movie mMovieSelected;
     private Api mApi;
     private Subscription mSubsMovie;
 
@@ -55,9 +54,12 @@ public class InDetailActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
-    public static void actionStart(Context context, InTheaters.Movie movie) {
+    public static void actionStart(Context context, String id, String title, String imageUrl, String casts, String genres) {
         Intent intent = new Intent(context, InDetailActivity.class);
-        intent.putExtra(EXTRA_MOVIE, movie);
+        intent.putExtra(EXTRA_ID, id);
+        intent.putExtra(EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_IMAGE_URL, imageUrl);
+        intent.putExtra(EXTRA_CASTS, casts);
         context.startActivity(intent);
     }
 
@@ -70,23 +72,21 @@ public class InDetailActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mMovieSelected = getIntent().getParcelableExtra(EXTRA_MOVIE);
+        String id = getIntent().getStringExtra(EXTRA_ID);
+        String title = getIntent().getStringExtra(EXTRA_TITLE);
+        String imageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
+        String casts = getIntent().getStringExtra(EXTRA_CASTS);
 
-        getSupportActionBar().setTitle(mMovieSelected.getTitle());
+        getSupportActionBar().setTitle(title);
         Picasso.with(this)
-                .load(mMovieSelected.getImages().getLarge())
+                .load(imageUrl)
                 .into(mBackDrop);
-        mDirectors.setText(MovieParser.parseDirectorsInTheaters(mMovieSelected.getDirectors()));
 
-        List<String> castNames = new ArrayList<>();
-        for (InTheaters.Movie.Cast cast : mMovieSelected.getCasts()) {
-            castNames.add(cast.getName());
-        }
-        mCasts.setText(MovieParser.parseCasts(castNames));
+        mCasts.setText(casts);
 
         mApi = ApiImpl.getInstance(this);
 
-        fetchMovieDetail(mMovieSelected.getId());
+        fetchMovieDetail(id);
     }
 
     @Override
@@ -119,13 +119,9 @@ public class InDetailActivity extends AppCompatActivity {
                         mProgressBar.setVisibility(View.GONE);
 
                         mSummary.setText(movie.getSummary());
-                        mDirectors.setText(MovieParser.parseDirectorsInTheaters(mMovieSelected.getDirectors()));
+                        mDirectors.setText(MovieParser.parseDirectors(movie.getDirectors()));
 
-                        List<String> castNames = new ArrayList<>();
-                        for (InTheaters.Movie.Cast cast : mMovieSelected.getCasts()) {
-                            castNames.add(cast.getName());
-                        }
-                        mCasts.setText(MovieParser.parseCasts(castNames));
+                        mCasts.setText(MovieParser.parseCasts(movie.getCasts()));
                     }
                 }, new Action1<Throwable>() {
                     @Override

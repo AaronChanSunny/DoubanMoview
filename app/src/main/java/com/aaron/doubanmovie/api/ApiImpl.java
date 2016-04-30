@@ -2,12 +2,12 @@ package com.aaron.doubanmovie.api;
 
 import android.content.Context;
 
-import com.aaron.doubanmovie.api.model.ComingSoon;
-import com.aaron.doubanmovie.api.model.InTheaters;
-import com.aaron.doubanmovie.api.model.Movie;
-import com.aaron.doubanmovie.api.model.Top;
+import com.aaron.doubanmovie.api.gson.ComingSoon;
+import com.aaron.doubanmovie.api.gson.InTheater;
+import com.aaron.doubanmovie.api.gson.Top;
 import com.aaron.doubanmovie.api.retrofit.ApiService;
 import com.aaron.doubanmovie.api.retrofit.RetrofitProvider;
+import com.aaron.doubanmovie.model.Movie;
 
 import retrofit2.Retrofit;
 import rx.Observable;
@@ -33,7 +33,7 @@ public class ApiImpl implements Api {
     }
 
     @Override
-    public Observable<InTheaters> getInTheaters(String city) {
+    public Observable<InTheater> getInTheaters(String city) {
         return mApiService.getInTheaters(city);
     }
 

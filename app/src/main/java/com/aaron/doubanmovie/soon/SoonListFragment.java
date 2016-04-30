@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
 import com.aaron.doubanmovie.api.ApiImpl;
-import com.aaron.doubanmovie.api.model.ComingSoon;
+import com.aaron.doubanmovie.api.gson.ComingSoon;
 import com.aaron.doubanmovie.util.Logger;
 
 import butterknife.Bind;
@@ -105,7 +105,7 @@ public class SoonListFragment extends Fragment {
                     public void call(ComingSoon comingSoon) {
                         mSwipe.setRefreshing(false);
 
-                        mAdapter.setMovies(comingSoon.getSubjects());
+                        mAdapter.setMovies(comingSoon.getMovies());
                         mAdapter.notifyDataSetChanged();
                     }
                 }, new Action1<Throwable>() {

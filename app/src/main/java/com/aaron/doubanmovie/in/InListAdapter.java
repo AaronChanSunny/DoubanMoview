@@ -10,7 +10,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.api.model.InTheaters;
+import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
@@ -29,14 +29,14 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
     private static final Logger logger = new Logger(InListAdapter.class);
 
     private Context mContext;
-    private List<InTheaters.Movie> mMovies;
+    private List<Movie> mMovies;
 
     public InListAdapter(Context context) {
         mContext = context;
         mMovies = new ArrayList<>();
     }
 
-    public void setMovies(List<InTheaters.Movie> movies) {
+    public void setMovies(List<Movie> movies) {
         mMovies.clear();
         mMovies.addAll(movies);
     }
@@ -50,13 +50,13 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        InTheaters.Movie movie = mMovies.get(position);
+        Movie movie = mMovies.get(position);
         holder.mTitle.setText(movie.getTitle());
         holder.mYear.setText(movie.getYear());
 
-        double average = movie.getRating().getAverage();
-        double max = movie.getRating().getMax();
-        float rating = (float) (average / max);
+        float average = movie.getRating().getAverage();
+        int max = movie.getRating().getMax();
+        float rating = average / max;
 
         holder.mRatingBar.setRating(rating * holder.mRatingBar.getNumStars());
         holder.mRatingValue.setText(String.format("%.1f", average));
@@ -64,11 +64,7 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
         String genres = MovieParser.parseGenres(movie.getGenres());
         holder.mType.setText(genres);
 
-        List<String> castNames = new ArrayList<>();
-        for (InTheaters.Movie.Cast cast : movie.getCasts()) {
-            castNames.add(cast.getName());
-        }
-        String casts = MovieParser.parseCasts(castNames);
+        String casts = MovieParser.parseCasts(movie.getCasts());
         holder.mCasts.setText(casts);
 
         String imageUrl = movie.getImages().getLarge();
@@ -106,8 +102,13 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    InTheaters.Movie movie = mMovies.get(getLayoutPosition());
-                    InDetailActivity.actionStart(mContext, movie);
+                    Movie movie = mMovies.get(getLayoutPosition());
+                    InDetailActivity.actionStart(mContext,
+                            movie.getId(),
+                            movie.getTitle(),
+                            movie.getImages().getLarge(),
+                            MovieParser.parseCasts(movie.getCasts()),
+                            MovieParser.parseGenres(movie.getGenres()));
                 }
             });
         }

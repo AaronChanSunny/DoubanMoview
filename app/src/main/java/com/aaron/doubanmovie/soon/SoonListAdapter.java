@@ -9,7 +9,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.api.model.ComingSoon;
+import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
@@ -27,13 +27,13 @@ public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHo
 
     private static final Logger logger = new Logger(SoonListAdapter.class);
 
-    private List<ComingSoon.Movie> mMovies;
+    private List<Movie> mMovies;
 
     public SoonListAdapter() {
         mMovies = new ArrayList<>();
     }
 
-    public void setMovies(List<ComingSoon.Movie> movies) {
+    public void setMovies(List<Movie> movies) {
         mMovies.clear();
         mMovies.addAll(movies);
     }
@@ -47,7 +47,7 @@ public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ComingSoon.Movie movie = mMovies.get(position);
+        Movie movie = mMovies.get(position);
         holder.mTitle.setText(movie.getTitle());
         holder.mYear.setText(movie.getYear());
 
@@ -61,11 +61,7 @@ public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHo
         String genres = MovieParser.parseGenres(movie.getGenres());
         holder.mType.setText(genres);
 
-        List<String> castNames = new ArrayList<>();
-        for (ComingSoon.Movie.Cast cast : movie.getCasts()) {
-            castNames.add(cast.getName());
-        }
-        String casts = MovieParser.parseCasts(castNames);
+        String casts = MovieParser.parseCasts(movie.getCasts());
         holder.mCasts.setText(casts);
 
         String imageUrl = movie.getImages().getLarge();
@@ -103,7 +99,7 @@ public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ComingSoon.Movie movie = mMovies.get(getLayoutPosition());
+                    Movie movie = mMovies.get(getLayoutPosition());
                     // InDetailActivity.actionStart(mContext, movie);
                 }
             });
