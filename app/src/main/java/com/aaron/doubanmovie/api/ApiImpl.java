@@ -180,14 +180,12 @@ public class ApiImpl implements Api {
     }
 
     private String getImageUrl(String html) {
-        List<String> urls = new ArrayList<>();
-
         Document document = Jsoup.parse(html);
         Element body = document.body();
 
-        Elements imgs = body.select("img[src~=(https://img.*?doubanio.com/view/photo/photo/public/)]");
+        Elements images = body.select("img[src~=(https://img.*?doubanio.com/view/photo/photo/public/)]");
 
-        return imgs.get(0).attr("src");
+        return images.get(0).attr("src");
     }
 
 }
