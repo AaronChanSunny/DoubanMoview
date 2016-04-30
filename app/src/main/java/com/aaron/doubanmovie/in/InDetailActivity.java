@@ -22,6 +22,9 @@ import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Subscription;
@@ -74,7 +77,12 @@ public class InDetailActivity extends AppCompatActivity {
                 .load(mMovieSelected.getImages().getLarge())
                 .into(mBackDrop);
         mDirectors.setText(MovieParser.parseDirectorsInTheaters(mMovieSelected.getDirectors()));
-        mCasts.setText(MovieParser.parseCastsInTheaters(mMovieSelected.getCasts()));
+
+        List<String> castNames = new ArrayList<>();
+        for (InTheaters.Movie.Cast cast : mMovieSelected.getCasts()) {
+            castNames.add(cast.getName());
+        }
+        mCasts.setText(MovieParser.parseCasts(castNames));
 
         mApi = ApiImpl.getInstance(this);
 
@@ -112,7 +120,12 @@ public class InDetailActivity extends AppCompatActivity {
 
                         mSummary.setText(movie.getSummary());
                         mDirectors.setText(MovieParser.parseDirectorsInTheaters(mMovieSelected.getDirectors()));
-                        mCasts.setText(MovieParser.parseCastsInTheaters(mMovieSelected.getCasts()));
+
+                        List<String> castNames = new ArrayList<>();
+                        for (InTheaters.Movie.Cast cast : mMovieSelected.getCasts()) {
+                            castNames.add(cast.getName());
+                        }
+                        mCasts.setText(MovieParser.parseCasts(castNames));
                     }
                 }, new Action1<Throwable>() {
                     @Override

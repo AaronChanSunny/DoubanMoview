@@ -41,7 +41,7 @@ public class ComingSoon {
      */
 
     @SerializedName("subjects")
-    private List<Subject> mSubjects;
+    private List<Movie> mSubjects;
 
     public int getCount() {
         return mCount;
@@ -75,15 +75,15 @@ public class ComingSoon {
         mTitle = title;
     }
 
-    public List<Subject> getSubjects() {
+    public List<Movie> getSubjects() {
         return mSubjects;
     }
 
-    public void setSubjects(List<Subject> subjects) {
+    public void setSubjects(List<Movie> subjects) {
         mSubjects = subjects;
     }
 
-    public static class Subject {
+    public static class Movie {
         /**
          * max : 10
          * average : 0
@@ -236,7 +236,7 @@ public class ComingSoon {
             @SerializedName("max")
             private int mMax;
             @SerializedName("average")
-            private int mAverage;
+            private double mAverage;
             @SerializedName("stars")
             private String mStars;
             @SerializedName("min")
@@ -250,7 +250,7 @@ public class ComingSoon {
                 mMax = max;
             }
 
-            public int getAverage() {
+            public double getAverage() {
                 return mAverage;
             }
 

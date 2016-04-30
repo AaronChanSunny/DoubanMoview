@@ -27,7 +27,7 @@ public class ApiImpl implements Api {
         return sInstance;
     }
 
-    public ApiImpl(Context context) {
+    private ApiImpl(Context context) {
         Retrofit retrofit = RetrofitProvider.getInstance(context).getRetrofit();
         mApiService = retrofit.create(ApiService.class);
     }

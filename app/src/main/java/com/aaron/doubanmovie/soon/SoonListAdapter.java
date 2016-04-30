@@ -1,6 +1,5 @@
-package com.aaron.doubanmovie.in;
+package com.aaron.doubanmovie.soon;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.api.model.InTheaters;
+import com.aaron.doubanmovie.api.model.ComingSoon;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
@@ -24,33 +23,31 @@ import butterknife.ButterKnife;
 /**
  * Created by Git on 2016/1/23.
  */
-public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder> {
+public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHolder> {
 
-    private static final Logger logger = new Logger(InListAdapter.class);
+    private static final Logger logger = new Logger(SoonListAdapter.class);
 
-    private Context mContext;
-    private List<InTheaters.Movie> mMovies;
+    private List<ComingSoon.Movie> mMovies;
 
-    public InListAdapter(Context context) {
-        mContext = context;
+    public SoonListAdapter() {
         mMovies = new ArrayList<>();
     }
 
-    public void setMovies(List<InTheaters.Movie> movies) {
+    public void setMovies(List<ComingSoon.Movie> movies) {
         mMovies.clear();
         mMovies.addAll(movies);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext)
-                .inflate(R.layout.item_in_list, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_soon_list, parent, false);
         return new ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        InTheaters.Movie movie = mMovies.get(position);
+        ComingSoon.Movie movie = mMovies.get(position);
         holder.mTitle.setText(movie.getTitle());
         holder.mYear.setText(movie.getYear());
 
@@ -65,14 +62,14 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
         holder.mType.setText(genres);
 
         List<String> castNames = new ArrayList<>();
-        for (InTheaters.Movie.Cast cast : movie.getCasts()) {
+        for (ComingSoon.Movie.Cast cast : movie.getCasts()) {
             castNames.add(cast.getName());
         }
         String casts = MovieParser.parseCasts(castNames);
         holder.mCasts.setText(casts);
 
         String imageUrl = movie.getImages().getLarge();
-        Picasso.with(mContext)
+        Picasso.with(holder.mImage.getContext())
                 .load(imageUrl)
                 .into(holder.mImage);
     }
@@ -106,8 +103,8 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    InTheaters.Movie movie = mMovies.get(getLayoutPosition());
-                    InDetailActivity.actionStart(mContext, movie);
+                    ComingSoon.Movie movie = mMovies.get(getLayoutPosition());
+                    // InDetailActivity.actionStart(mContext, movie);
                 }
             });
         }

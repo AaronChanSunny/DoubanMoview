@@ -41,25 +41,11 @@ public class MovieParser {
         return sb.toString();
     }
 
-    public static String parseCasts(List<Movie.Cast> casts) {
+    public static String parseCasts(List<String> casts) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < casts.size(); i++) {
-            sb.append(casts.get(i).getName());
-
-            if (i != casts.size() - 1) {
-                sb.append(SEPARATOR);
-            }
-        }
-
-        return sb.toString();
-    }
-
-    public static String parseCastsInTheaters(List<InTheaters.Movie.Cast> casts) {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < casts.size(); i++) {
-            sb.append(casts.get(i).getName());
+            sb.append(casts.get(i));
 
             if (i != casts.size() - 1) {
                 sb.append(SEPARATOR);
