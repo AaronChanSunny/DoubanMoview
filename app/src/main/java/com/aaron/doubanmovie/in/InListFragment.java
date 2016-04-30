@@ -96,7 +96,7 @@ public class InListFragment extends Fragment {
     }
 
     private void initData() {
-        mAdapter = new InListAdapter(getActivity());
+        mAdapter = new InListAdapter();
         mApi = ApiImpl.getInstance(getActivity());
     }
 

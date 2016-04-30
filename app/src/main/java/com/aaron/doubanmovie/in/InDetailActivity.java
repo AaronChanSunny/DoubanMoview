@@ -74,7 +74,8 @@ public class InDetailActivity extends AppCompatActivity {
 
         String id = getIntent().getStringExtra(EXTRA_ID);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
-        String imageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
+        // String imageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
+        String imageUrl = "https://img1.doubanio.com/view/photo/photo/public/p2323952737.jpg";
         String casts = getIntent().getStringExtra(EXTRA_CASTS);
 
         getSupportActionBar().setTitle(title);

@@ -1,5 +1,6 @@
 package com.aaron.doubanmovie.soon;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,7 +58,9 @@ public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHo
         float rating = (float) (average / max);
 
         holder.mRatingBar.setRating(rating * holder.mRatingBar.getNumStars());
-        holder.mRatingValue.setText(String.format("%.1f", average));
+        Context context = holder.mRatingValue.getContext();
+        holder.mRatingValue.setText(rating == 0.0 ? context.getString(R.string.label_rating_unavailable) :
+                String.format(Locale.CHINA, "%.1f", average));
 
         String genres = MovieParser.parseGenres(movie.getGenres());
         holder.mType.setText(genres);

@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,11 +29,9 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
 
     private static final Logger logger = new Logger(InListAdapter.class);
 
-    private Context mContext;
     private List<Movie> mMovies;
 
-    public InListAdapter(Context context) {
-        mContext = context;
+    public InListAdapter() {
         mMovies = new ArrayList<>();
     }
 
@@ -43,7 +42,7 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext)
+        View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_in_list, parent, false);
         return new ViewHolder(itemView);
     }
@@ -59,7 +58,9 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
         float rating = average / max;
 
         holder.mRatingBar.setRating(rating * holder.mRatingBar.getNumStars());
-        holder.mRatingValue.setText(String.format("%.1f", average));
+        Context context = holder.mRatingValue.getContext();
+        holder.mRatingValue.setText(rating == 0.0 ? context.getString(R.string.label_rating_unavailable) :
+                String.format(Locale.CHINA, "%.1f", average));
 
         String genres = MovieParser.parseGenres(movie.getGenres());
         holder.mType.setText(genres);
@@ -68,7 +69,7 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
         holder.mCasts.setText(casts);
 
         String imageUrl = movie.getImages().getLarge();
-        Picasso.with(mContext)
+        Picasso.with(context)
                 .load(imageUrl)
                 .into(holder.mImage);
     }
@@ -95,7 +96,7 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
         @Bind(R.id.casts)
         TextView mCasts;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -103,7 +104,7 @@ public class InListAdapter extends RecyclerView.Adapter<InListAdapter.ViewHolder
                 @Override
                 public void onClick(View v) {
                     Movie movie = mMovies.get(getLayoutPosition());
-                    InDetailActivity.actionStart(mContext,
+                    InDetailActivity.actionStart(itemView.getContext(),
                             movie.getId(),
                             movie.getTitle(),
                             movie.getImages().getLarge(),
