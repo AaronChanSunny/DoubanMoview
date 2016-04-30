@@ -18,4 +18,6 @@ public interface Api {
     Observable<ComingSoon> getComingSoon(int start, int count);
 
     Observable<Top> getTop(int start, int count);
+
+    Observable<String> getMoviePhotosHtml(String id);
 }

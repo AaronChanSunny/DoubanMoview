@@ -87,6 +87,8 @@ public class InDetailActivity extends AppCompatActivity {
         mApi = ApiImpl.getInstance(this);
 
         fetchMovieDetail(id);
+
+        fetchPhotosHtml(id);
     }
 
     @Override
@@ -127,6 +129,23 @@ public class InDetailActivity extends AppCompatActivity {
                     @Override
                     public void call(Throwable throwable) {
                         Toast.makeText(InDetailActivity.this, R.string.server_error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void fetchPhotosHtml(String id) {
+        mApi.getMoviePhotosHtml(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        logger.debug("Photos html:\n" + s);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        logger.error(throwable);
                     }
                 });
     }
