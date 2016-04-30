@@ -8,5 +8,5 @@
 - 采用mvp(model + view + presention)组织代码，具体见`feature/mvp`分支
 
 ## 预览
-![](screenshots/device-2016-02-03-100213.png)
-![详情](screenshots/device-2016-02-03-100303.png)
+![](screenshots/Screenshot_20160501-010803.png) ![](screenshots/Screenshot_20160501-010820.png)
+![](screenshots/Screenshot_20160501-010858.png)
