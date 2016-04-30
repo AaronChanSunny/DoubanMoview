@@ -2,8 +2,10 @@ package com.aaron.doubanmovie.api;
 
 import android.content.Context;
 
+import com.aaron.doubanmovie.api.model.ComingSoon;
 import com.aaron.doubanmovie.api.model.InTheaters;
 import com.aaron.doubanmovie.api.model.Movie;
+import com.aaron.doubanmovie.api.model.Top;
 import com.aaron.doubanmovie.api.retrofit.ApiService;
 import com.aaron.doubanmovie.api.retrofit.RetrofitProvider;
 
@@ -39,4 +41,15 @@ public class ApiImpl implements Api {
     public Observable<Movie> getMovie(String id) {
         return mApiService.getMovie(id);
     }
+
+    @Override
+    public Observable<ComingSoon> getComingSoon(int start, int count) {
+        return mApiService.getComingSoon(start, count);
+    }
+
+    @Override
+    public Observable<Top> getTop(int start, int count) {
+        return mApiService.getTop(start, count);
+    }
+
 }
