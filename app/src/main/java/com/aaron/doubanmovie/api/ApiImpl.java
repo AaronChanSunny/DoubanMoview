@@ -56,8 +56,8 @@ public class ApiImpl implements Api {
     }
 
     @Override
-    public Observable<InTheater> getInTheaters(String city) {
-        return mApiService.getInTheaters(city);
+    public Observable<InTheater> getInTheaters(String city, int start, int count) {
+        return mApiService.getInTheaters(city, start, count);
     }
 
     @Override

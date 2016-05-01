@@ -16,6 +16,7 @@ import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
 import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.api.gson.ComingSoon;
+import com.aaron.doubanmovie.common.MovieListAdapter;
 import com.aaron.doubanmovie.util.Logger;
 
 import butterknife.Bind;
@@ -37,7 +38,7 @@ public class SoonListFragment extends Fragment {
     ProgressBar mProgressBar;
 
     private Api mApi;
-    private SoonListAdapter mAdapter;
+    private MovieListAdapter mAdapter;
     private Subscription mSubsComingSoon;
     private Subscription mSubsMoreComingSoon;
 
@@ -73,8 +74,8 @@ public class SoonListFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mListMovies.setLayoutManager(layoutManager);
 
-        mAdapter = new SoonListAdapter(mListMovies);
-        mAdapter.setOnLoadMoreListener(new SoonListAdapter.OnLoadMoreCallback() {
+        mAdapter.bindRecyclerView(mListMovies);
+        mAdapter.setOnLoadMoreListener(new MovieListAdapter.OnLoadMoreCallback() {
             @Override
             public void onLoadMore() {
                 fetchMoreMovies();
@@ -104,6 +105,7 @@ public class SoonListFragment extends Fragment {
 
     private void initData() {
         mApi = ApiImpl.getInstance(getActivity());
+        mAdapter = new MovieListAdapter();
     }
 
     private void fetchMovies() {

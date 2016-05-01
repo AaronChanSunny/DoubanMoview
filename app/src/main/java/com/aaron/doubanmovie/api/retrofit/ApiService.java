@@ -17,7 +17,7 @@ import rx.Observable;
 public interface ApiService {
 
     @GET("/v2/movie/in_theaters")
-    Observable<InTheater> getInTheaters(@Query("city") String city);
+    Observable<InTheater> getInTheaters(@Query("city") String city, @Query("start") int start, @Query("count") int count);
 
     @GET("/v2/movie/subject/{id}")
     Observable<Movie> getMovie(@Path("id") String id);

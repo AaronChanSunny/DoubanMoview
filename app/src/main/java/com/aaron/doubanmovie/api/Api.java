@@ -13,7 +13,7 @@ import rx.Observable;
  * Created by aaronchan on 16/4/22.
  */
 public interface Api {
-    Observable<InTheater> getInTheaters(String city);
+    Observable<InTheater> getInTheaters(String city, int start, int count);
 
     Observable<Movie> getMovie(String id);
 

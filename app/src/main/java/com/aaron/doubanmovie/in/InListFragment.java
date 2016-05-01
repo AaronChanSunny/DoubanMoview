@@ -16,6 +16,7 @@ import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
 import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.api.gson.InTheater;
+import com.aaron.doubanmovie.common.MovieListAdapter;
 import com.aaron.doubanmovie.util.Logger;
 
 import butterknife.Bind;
@@ -30,15 +31,16 @@ import rx.schedulers.Schedulers;
  */
 public class InListFragment extends Fragment {
     private static final Logger logger = new Logger(InListFragment.class);
+    private static final String CITY = "福州";
 
     @Bind(R.id.list_movies)
-    RecyclerView mMoviesRecycleView;
+    RecyclerView mListMovies;
     @Bind(R.id.swipe)
     SwipeRefreshLayout mSwipe;
     @Bind(R.id.progress_bar)
     ProgressBar mProgressBar;
 
-    private InListAdapter mAdapter;
+    private MovieListAdapter mAdapter;
     private Api mApi;
     private Subscription mSubsInTheater;
 
@@ -73,8 +75,16 @@ public class InListFragment extends Fragment {
         });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mMoviesRecycleView.setLayoutManager(layoutManager);
-        mMoviesRecycleView.setAdapter(mAdapter);
+        mListMovies.setLayoutManager(layoutManager);
+
+        mAdapter.bindRecyclerView(mListMovies);
+        mAdapter.setOnLoadMoreListener(new MovieListAdapter.OnLoadMoreCallback() {
+            @Override
+            public void onLoadMore() {
+                fetchMoreMovies();
+            }
+        });
+        mListMovies.setAdapter(mAdapter);
 
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);
 
@@ -98,12 +108,12 @@ public class InListFragment extends Fragment {
     }
 
     private void initData() {
-        mAdapter = new InListAdapter();
         mApi = ApiImpl.getInstance(getActivity());
+        mAdapter = new MovieListAdapter();
     }
 
     private void fetchMovies() {
-        mSubsInTheater = mApi.getInTheaters("福州")
+        mSubsInTheater = mApi.getInTheaters(CITY, 0, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<InTheater>() {
@@ -125,9 +135,38 @@ public class InListFragment extends Fragment {
 
     public void refreshMovies() {
         mSwipe.setRefreshing(true);
-        mMoviesRecycleView.smoothScrollToPosition(0);
+        mListMovies.smoothScrollToPosition(0);
 
         fetchMovies();
+    }
+
+    private void fetchMoreMovies() {
+        // add progress item
+        mAdapter.getMovies().add(null);
+        mAdapter.notifyItemInserted(mAdapter.getMovies().size() - 1);
+
+        final int currentSize = mAdapter.getItemCount();
+
+        mApi.getInTheaters(CITY, currentSize, 20)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<InTheater>() {
+                    @Override
+                    public void call(InTheater inTheater) {
+                        mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
+                        mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
+
+                        mAdapter.getMovies().addAll(inTheater.getMovies());
+                        mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
+
+                        mAdapter.setLoaded();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        logger.error(throwable);
+                    }
+                });
     }
 
 }
