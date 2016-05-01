@@ -1,6 +1,11 @@
 package com.aaron.doubanmovie.common;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +21,7 @@ import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,47 +103,74 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (viewType == VIEW_ITEM) {
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_movie_list, parent, false);
-            holder = new ViewHolder1(itemView);
+            holder = new ItemViewHolder(itemView);
         } else {
             View loadingView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_loading, parent, false);
-            holder = new ViewHolder2(loadingView);
+            holder = new LoadingViewHolder(loadingView);
         }
 
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == VIEW_ITEM) {
-            Movie movie = mMovies.get(position);
+            final Movie movie = mMovies.get(position);
 
-            ViewHolder1 holder1 = (ViewHolder1) holder;
-            holder1.mTitle.setText(movie.getTitle());
-            holder1.mYear.setText(movie.getYear());
+            final ItemViewHolder itemHolder = (ItemViewHolder) holder;
+            itemHolder.mTitle.setText(movie.getTitle());
+            itemHolder.mYear.setText(movie.getYear());
 
             double average = movie.getRating().getAverage();
             double max = movie.getRating().getMax();
             float rating = (float) (average / max);
 
-            holder1.mRatingBar.setRating(rating * holder1.mRatingBar.getNumStars());
-            Context context = holder1.mRatingValue.getContext();
-            holder1.mRatingValue.setText(rating == 0.0 ? context.getString(R.string.label_rating_unavailable) :
+            itemHolder.mRatingBar.setRating(rating * itemHolder.mRatingBar.getNumStars());
+            Context context = itemHolder.mRatingValue.getContext();
+            itemHolder.mRatingValue.setText(rating == 0.0 ? context.getString(R.string.label_rating_unavailable) :
                     String.format(Locale.CHINA, "%.1f", average));
 
             String genres = MovieParser.parseGenres(movie.getGenres());
-            holder1.mType.setText(genres);
+            itemHolder.mType.setText(genres);
 
             String casts = MovieParser.parseCasts(movie.getCasts());
-            holder1.mCasts.setText(casts);
+            itemHolder.mCasts.setText(casts);
 
             String imageUrl = movie.getImages().getLarge();
-            Picasso.with(holder1.mImage.getContext())
+
+            Target target = new Target() {
+                @Override
+                public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            int defaultColor = ContextCompat.getColor(itemHolder.mCardView.getContext(), R.color.colorPrimary);
+                            int backgroundColor = palette.getMutedColor(defaultColor);
+
+                            itemHolder.mCardView.setCardBackgroundColor(backgroundColor);
+                            itemHolder.mImage.setImageBitmap(bitmap);
+                        }
+                    });
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            };
+            itemHolder.mImage.setTag(target);
+            Picasso.with(itemHolder.mImage.getContext())
                     .load(imageUrl)
-                    .into(holder1.mImage);
+                    .into(target);
         } else {
-            ViewHolder2 holder2 = (ViewHolder2) holder;
-            holder2.mLoading.setIndeterminate(true);
+            LoadingViewHolder loadingHolder = (LoadingViewHolder) holder;
+            loadingHolder.mLoading.setIndeterminate(true);
         }
     }
 
@@ -156,7 +189,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return mMovies.get(position) != null ? VIEW_ITEM : VIEW_LOADING;
     }
 
-    public class ViewHolder1 extends RecyclerView.ViewHolder {
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.title)
         TextView mTitle;
@@ -172,8 +205,10 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         TextView mType;
         @Bind(R.id.casts)
         TextView mCasts;
+        @Bind(R.id.card)
+        CardView mCardView;
 
-        public ViewHolder1(final View itemView) {
+        public ItemViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -189,11 +224,11 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    public class ViewHolder2 extends RecyclerView.ViewHolder {
+    public class LoadingViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.loading)
         ProgressBar mLoading;
 
-        public ViewHolder2(View itemView) {
+        public LoadingViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

@@ -55,8 +55,6 @@ public class InListFragment extends BaseFragment {
         logger.debug("onCreate");
 
         initData();
-
-        fetchMovies();
     }
 
     @Nullable
@@ -101,6 +99,8 @@ public class InListFragment extends BaseFragment {
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);
 
         mProgressBar.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
+
+        fetchMovies();
 
         return view;
     }
@@ -162,11 +162,10 @@ public class InListFragment extends BaseFragment {
                     public void call(InTheater inTheater) {
                         mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
                         mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
+                        mAdapter.setLoaded();
 
                         mAdapter.getMovies().addAll(inTheater.getMovies());
                         mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
-
-                        mAdapter.setLoaded();
                     }
                 }, new Action1<Throwable>() {
                     @Override

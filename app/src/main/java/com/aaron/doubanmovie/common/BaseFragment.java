@@ -37,7 +37,7 @@ public class BaseFragment extends Fragment {
      * 对所有 Subscription 取消订阅，避免内存泄漏
      */
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         for (Subscription subscription : mSubscriptionList) {
             if (!subscription.isUnsubscribed()) {
                 subscription.unsubscribe();

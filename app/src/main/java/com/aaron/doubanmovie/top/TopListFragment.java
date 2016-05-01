@@ -17,7 +17,6 @@ import com.aaron.doubanmovie.api.gson.Top;
 import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
 import com.aaron.doubanmovie.model.Movie;
-import com.aaron.doubanmovie.soon.SoonListFragment;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 
@@ -31,7 +30,7 @@ import rx.schedulers.Schedulers;
  * Created by aaronchan on 16/4/27.
  */
 public class TopListFragment extends BaseFragment {
-    private static final Logger logger = new Logger(SoonListFragment.class);
+    private static final Logger logger = new Logger(TopListFragment.class);
 
     @Bind(R.id.list_movies)
     RecyclerView mListMovies;
@@ -53,8 +52,6 @@ public class TopListFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         initData();
-
-        fetchMovies();
     }
 
     @Override
@@ -63,6 +60,8 @@ public class TopListFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_top_list, container, false);
         ButterKnife.bind(this, view);
 
+        logger.debug("onCreateView");
+
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -70,7 +69,6 @@ public class TopListFragment extends BaseFragment {
                 fetchMovies();
             }
         });
-
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mListMovies.setLayoutManager(layoutManager);
@@ -99,6 +97,8 @@ public class TopListFragment extends BaseFragment {
 
         mProgressBar.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
 
+        fetchMovies();
+
         return view;
     }
 
@@ -121,6 +121,7 @@ public class TopListFragment extends BaseFragment {
                 .subscribe(new Action1<Top>() {
                     @Override
                     public void call(Top top) {
+                        logger.debug("swipe is " + mSwipe);
                         mSwipe.setRefreshing(false);
                         mProgressBar.setVisibility(View.GONE);
 

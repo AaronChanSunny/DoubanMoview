@@ -51,8 +51,6 @@ public class SoonListFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         initData();
-
-        fetchMovies();
     }
 
     @Override
@@ -96,6 +94,8 @@ public class SoonListFragment extends BaseFragment {
         mListMovies.setAdapter(mAdapter);
 
         mProgressBar.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
+
+        fetchMovies();
 
         return view;
     }

@@ -33,4 +33,17 @@
         <item name="android:textColor">@color/tabTextColor</item>
     </style>
 
+    <style name="CustomSubheadTextAppearance" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textColor">@color/icons</item>
+    </style>
+
+    <style name="CustomBody1TextAppearance" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/icons</item>
+    </style>
+
+    <style name="CardViewStyle">
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
+
 </resources>
