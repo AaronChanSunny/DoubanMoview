@@ -72,7 +72,8 @@ public class InListFragment extends Fragment {
             }
         });
 
-        mMoviesRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mMoviesRecycleView.setLayoutManager(layoutManager);
         mMoviesRecycleView.setAdapter(mAdapter);
 
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);

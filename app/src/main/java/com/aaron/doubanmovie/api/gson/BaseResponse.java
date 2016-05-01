@@ -7,33 +7,33 @@ import com.google.gson.annotations.SerializedName;
  */
 public class BaseResponse {
     @SerializedName("start")
-    private String mStart;
+    private int mStart;
     @SerializedName("count")
-    private String mCount;
+    private int mCount;
     @SerializedName("total")
-    private String mTotal;
+    private int mTotal;
 
-    public String getStart() {
+    public int getStart() {
         return mStart;
     }
 
-    public void setStart(String start) {
+    public void setStart(int start) {
         mStart = start;
     }
 
-    public String getCount() {
+    public int getCount() {
         return mCount;
     }
 
-    public void setCount(String count) {
+    public void setCount(int count) {
         mCount = count;
     }
 
-    public String getTotal() {
+    public int getTotal() {
         return mTotal;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(int total) {
         mTotal = total;
     }
 }

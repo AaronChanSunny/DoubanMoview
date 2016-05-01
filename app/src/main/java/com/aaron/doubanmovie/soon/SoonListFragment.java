@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
@@ -30,12 +31,15 @@ public class SoonListFragment extends Fragment {
 
     @Bind(R.id.list_movies)
     RecyclerView mListMovies;
-
     @Bind(R.id.swipe)
     SwipeRefreshLayout mSwipe;
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
+
     private Api mApi;
     private SoonListAdapter mAdapter;
     private Subscription mSubsComingSoon;
+    private Subscription mSubsMoreComingSoon;
 
     public static SoonListFragment newInstance() {
         SoonListFragment fragment = new SoonListFragment();
@@ -47,6 +51,8 @@ public class SoonListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         initData();
+
+        fetchMovies();
     }
 
     @Override
@@ -62,17 +68,22 @@ public class SoonListFragment extends Fragment {
                 fetchMovies();
             }
         });
-        mSwipe.post(new Runnable() {
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mListMovies.setLayoutManager(layoutManager);
+
+        mAdapter = new SoonListAdapter(mListMovies);
+        mAdapter.setOnLoadMoreListener(new SoonListAdapter.OnLoadMoreCallback() {
             @Override
-            public void run() {
-                mSwipe.setRefreshing(true);
+            public void onLoadMore() {
+                fetchMoreMovies();
             }
         });
 
-        mListMovies.setLayoutManager(new LinearLayoutManager(getActivity()));
         mListMovies.setAdapter(mAdapter);
 
-        fetchMovies();
+        mProgressBar.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
 
         return view;
     }
@@ -93,20 +104,49 @@ public class SoonListFragment extends Fragment {
 
     private void initData() {
         mApi = ApiImpl.getInstance(getActivity());
-        mAdapter = new SoonListAdapter();
     }
 
     private void fetchMovies() {
-        mSubsComingSoon = mApi.getComingSoon(0, 10)
+        mSubsComingSoon = mApi.getComingSoon(0, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<ComingSoon>() {
                     @Override
                     public void call(ComingSoon comingSoon) {
                         mSwipe.setRefreshing(false);
+                        mProgressBar.setVisibility(View.GONE);
 
                         mAdapter.setMovies(comingSoon.getMovies());
                         mAdapter.notifyDataSetChanged();
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        logger.error(throwable);
+                    }
+                });
+    }
+
+    private void fetchMoreMovies() {
+        // add progress item
+        mAdapter.getMovies().add(null);
+        mAdapter.notifyItemInserted(mAdapter.getMovies().size() - 1);
+
+        final int currentSize = mAdapter.getItemCount();
+
+        mSubsMoreComingSoon = mApi.getComingSoon(currentSize, 20)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<ComingSoon>() {
+                    @Override
+                    public void call(ComingSoon comingSoon) {
+                        mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
+                        mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
+
+                        mAdapter.getMovies().addAll(comingSoon.getMovies());
+                        mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
+
+                        mAdapter.setLoaded();
                     }
                 }, new Action1<Throwable>() {
                     @Override

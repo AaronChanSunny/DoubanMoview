@@ -1,11 +1,13 @@
 package com.aaron.doubanmovie.soon;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -25,61 +27,124 @@ import butterknife.ButterKnife;
 /**
  * Created by Git on 2016/1/23.
  */
-public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHolder> {
+public class SoonListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final Logger logger = new Logger(SoonListAdapter.class);
+    private static final int VIEW_ITEM = 0;
+    private static final int VIEW_LOADING = 1;
+    private static final int VISIBLE_THRESHOLD = 5;
 
     private List<Movie> mMovies;
+    private boolean mIsLoading;
+    private OnLoadMoreCallback onLoadMoreListener;
 
-    public SoonListAdapter() {
+    public SoonListAdapter(RecyclerView recyclerView) {
         mMovies = new ArrayList<>();
+
+        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+            final LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    int totalItemCount = layoutManager.getItemCount();
+                    int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                    if (!mIsLoading && totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)) {
+                        // End has been reached
+                        // Do something
+                        if (onLoadMoreListener != null) {
+                            onLoadMoreListener.onLoadMore();
+                        }
+                        mIsLoading = true;
+                    }
+                }
+            });
+        }
+    }
+
+    public void setOnLoadMoreListener(OnLoadMoreCallback onLoadMoreListener) {
+        this.onLoadMoreListener = onLoadMoreListener;
+    }
+
+    public List<Movie> getMovies() {
+        return mMovies;
     }
 
     public void setMovies(List<Movie> movies) {
-        mMovies.clear();
-        mMovies.addAll(movies);
+        mMovies = movies;
+    }
+
+    public void setLoaded() {
+        mIsLoading = false;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_soon_list, parent, false);
-        return new ViewHolder(itemView);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder holder;
+
+        if (viewType == VIEW_ITEM) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_soon_list, parent, false);
+            holder = new ViewHolder1(itemView);
+        } else {
+            View loadingView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_loading, parent, false);
+            holder = new ViewHolder2(loadingView);
+        }
+
+        return holder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Movie movie = mMovies.get(position);
-        holder.mTitle.setText(movie.getTitle());
-        holder.mYear.setText(movie.getYear());
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder.getItemViewType() == VIEW_ITEM) {
+            Movie movie = mMovies.get(position);
 
-        double average = movie.getRating().getAverage();
-        double max = movie.getRating().getMax();
-        float rating = (float) (average / max);
+            ViewHolder1 holder1 = (ViewHolder1) holder;
+            holder1.mTitle.setText(movie.getTitle() + " " + position);
+            holder1.mYear.setText(movie.getYear());
 
-        holder.mRatingBar.setRating(rating * holder.mRatingBar.getNumStars());
-        Context context = holder.mRatingValue.getContext();
-        holder.mRatingValue.setText(rating == 0.0 ? context.getString(R.string.label_rating_unavailable) :
-                String.format(Locale.CHINA, "%.1f", average));
+            double average = movie.getRating().getAverage();
+            double max = movie.getRating().getMax();
+            float rating = (float) (average / max);
 
-        String genres = MovieParser.parseGenres(movie.getGenres());
-        holder.mType.setText(genres);
+            holder1.mRatingBar.setRating(rating * holder1.mRatingBar.getNumStars());
+            Context context = holder1.mRatingValue.getContext();
+            holder1.mRatingValue.setText(rating == 0.0 ? context.getString(R.string.label_rating_unavailable) :
+                    String.format(Locale.CHINA, "%.1f", average));
 
-        String casts = MovieParser.parseCasts(movie.getCasts());
-        holder.mCasts.setText(casts);
+            String genres = MovieParser.parseGenres(movie.getGenres());
+            holder1.mType.setText(genres);
 
-        String imageUrl = movie.getImages().getLarge();
-        Picasso.with(holder.mImage.getContext())
-                .load(imageUrl)
-                .into(holder.mImage);
+            String casts = MovieParser.parseCasts(movie.getCasts());
+            holder1.mCasts.setText(casts);
+
+            String imageUrl = movie.getImages().getLarge();
+            Picasso.with(holder1.mImage.getContext())
+                    .load(imageUrl)
+                    .into(holder1.mImage);
+        } else {
+            ViewHolder2 holder2 = (ViewHolder2) holder;
+            holder2.mLoading.setIndeterminate(true);
+        }
     }
 
+    /**
+     * 下拉刷新的进度条也算一个列表项
+     * @return
+     */
     @Override
     public int getItemCount() {
         return mMovies.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public int getItemViewType(int position) {
+        return mMovies.get(position) != null ? VIEW_ITEM : VIEW_LOADING;
+    }
+
+    public class ViewHolder1 extends RecyclerView.ViewHolder {
 
         @Bind(R.id.title)
         TextView mTitle;
@@ -96,7 +161,7 @@ public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHo
         @Bind(R.id.casts)
         TextView mCasts;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder1(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -109,6 +174,20 @@ public class SoonListAdapter extends RecyclerView.Adapter<SoonListAdapter.ViewHo
             });
         }
 
+    }
+
+    public class ViewHolder2 extends RecyclerView.ViewHolder {
+        @Bind(R.id.loading)
+        ProgressBar mLoading;
+
+        public ViewHolder2(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public interface OnLoadMoreCallback {
+        void onLoadMore();
     }
 
 }
