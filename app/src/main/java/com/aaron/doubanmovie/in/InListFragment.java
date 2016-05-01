@@ -2,7 +2,6 @@ package com.aaron.doubanmovie.in;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +15,14 @@ import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
 import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.api.gson.InTheater;
+import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
+import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
+import com.aaron.doubanmovie.util.MovieParser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -29,7 +30,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by aaronchan on 16/4/27.
  */
-public class InListFragment extends Fragment {
+public class InListFragment extends BaseFragment {
     private static final Logger logger = new Logger(InListFragment.class);
     private static final String CITY = "福州";
 
@@ -42,7 +43,6 @@ public class InListFragment extends Fragment {
 
     private MovieListAdapter mAdapter;
     private Api mApi;
-    private Subscription mSubsInTheater;
 
     public static InListFragment newInstance() {
         return new InListFragment();
@@ -78,6 +78,18 @@ public class InListFragment extends Fragment {
         mListMovies.setLayoutManager(layoutManager);
 
         mAdapter.bindRecyclerView(mListMovies);
+        mAdapter.setOnItemClickListener(new MovieListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                Movie movie = mAdapter.getMovies().get(position);
+                InDetailActivity.actionStart(getActivity(),
+                        movie.getId(),
+                        movie.getTitle(),
+                        movie.getImages().getLarge(),
+                        MovieParser.parseCasts(movie.getCasts()),
+                        MovieParser.parseGenres(movie.getGenres()));
+            }
+        });
         mAdapter.setOnLoadMoreListener(new MovieListAdapter.OnLoadMoreCallback() {
             @Override
             public void onLoadMore() {
@@ -99,21 +111,14 @@ public class InListFragment extends Fragment {
         ButterKnife.unbind(this);
     }
 
-    @Override
-    public void onDestroy() {
-        if (!mSubsInTheater.isUnsubscribed()) {
-            mSubsInTheater.unsubscribe();
-        }
-        super.onDestroy();
-    }
-
     private void initData() {
         mApi = ApiImpl.getInstance(getActivity());
         mAdapter = new MovieListAdapter();
     }
 
     private void fetchMovies() {
-        mSubsInTheater = mApi.getInTheaters(CITY, 0, 20)
+        addSubscription(
+                mApi.getInTheaters(CITY, 0, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<InTheater>() {
@@ -130,7 +135,8 @@ public class InListFragment extends Fragment {
                     public void call(Throwable throwable) {
                         Toast.makeText(getActivity(), R.string.server_error, Toast.LENGTH_SHORT).show();
                     }
-                });
+                })
+        );
     }
 
     public void refreshMovies() {
@@ -147,7 +153,8 @@ public class InListFragment extends Fragment {
 
         final int currentSize = mAdapter.getItemCount();
 
-        mApi.getInTheaters(CITY, currentSize, 20)
+        addSubscription(
+                mApi.getInTheaters(CITY, currentSize, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<InTheater>() {
@@ -166,7 +173,8 @@ public class InListFragment extends Fragment {
                     public void call(Throwable throwable) {
                         logger.error(throwable);
                     }
-                });
+                })
+        );
     }
 
 }
