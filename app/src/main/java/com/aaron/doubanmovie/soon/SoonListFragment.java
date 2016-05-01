@@ -3,7 +3,6 @@ package com.aaron.doubanmovie.soon;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +15,7 @@ import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
 import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.api.gson.ComingSoon;
+import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
 import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
@@ -23,12 +23,11 @@ import com.aaron.doubanmovie.util.MovieParser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-public class SoonListFragment extends Fragment {
+public class SoonListFragment extends BaseFragment {
 
     private static final Logger logger = new Logger(SoonListFragment.class);
 
@@ -41,8 +40,6 @@ public class SoonListFragment extends Fragment {
 
     private Api mApi;
     private MovieListAdapter mAdapter;
-    private Subscription mSubsComingSoon;
-    private Subscription mSubsMoreComingSoon;
 
     public static SoonListFragment newInstance() {
         SoonListFragment fragment = new SoonListFragment();
@@ -109,21 +106,14 @@ public class SoonListFragment extends Fragment {
         ButterKnife.unbind(this);
     }
 
-    @Override
-    public void onDestroy() {
-        if (!mSubsComingSoon.isUnsubscribed()) {
-            mSubsComingSoon.unsubscribe();
-        }
-        super.onDestroy();
-    }
-
     private void initData() {
         mApi = ApiImpl.getInstance(getActivity());
         mAdapter = new MovieListAdapter();
     }
 
     private void fetchMovies() {
-        mSubsComingSoon = mApi.getComingSoon(0, 20)
+        addSubscription(
+                mApi.getComingSoon(0, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<ComingSoon>() {
@@ -140,7 +130,8 @@ public class SoonListFragment extends Fragment {
                     public void call(Throwable throwable) {
                         logger.error(throwable);
                     }
-                });
+                })
+        );
     }
 
     private void fetchMoreMovies() {
@@ -150,25 +141,27 @@ public class SoonListFragment extends Fragment {
 
         final int currentSize = mAdapter.getItemCount();
 
-        mSubsMoreComingSoon = mApi.getComingSoon(currentSize, 20)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<ComingSoon>() {
-                    @Override
-                    public void call(ComingSoon comingSoon) {
-                        mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
-                        mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
+        addSubscription(
+                mApi.getComingSoon(currentSize, 20)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<ComingSoon>() {
+                            @Override
+                            public void call(ComingSoon comingSoon) {
+                                mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
+                                mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
 
-                        mAdapter.getMovies().addAll(comingSoon.getMovies());
-                        mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
+                                mAdapter.getMovies().addAll(comingSoon.getMovies());
+                                mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
 
-                        mAdapter.setLoaded();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        logger.error(throwable);
-                    }
-                });
+                                mAdapter.setLoaded();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                logger.error(throwable);
+                            }
+                        })
+        );
     }
 }

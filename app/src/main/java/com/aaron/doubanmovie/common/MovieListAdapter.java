@@ -96,7 +96,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         if (viewType == VIEW_ITEM) {
             View itemView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_soon_list, parent, false);
+                    .inflate(R.layout.item_movie_list, parent, false);
             holder = new ViewHolder1(itemView);
         } else {
             View loadingView = LayoutInflater.from(parent.getContext())
