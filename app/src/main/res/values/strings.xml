@@ -16,6 +16,6 @@
     <string name="title_fragment_in">正在热映</string>
     <string name="title_fragment_soon">即将上映</string>
     <string name="title_fragment_top">热榜经典</string>
-    <string name="fab_scrolling_view_behavior">com.aaron.doubanmovie.in.ScrollAwareFabBehavior</string>
+    <string name="fab_scrolling_view_behavior">com.aaron.doubanmovie.common.ScrollAwareFabBehavior</string>
     <string name="label_rating_unavailable">暂无评分</string>
 </resources>
