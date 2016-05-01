@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.aaron.doubanmovie.R;
@@ -34,6 +35,8 @@ public class InListFragment extends Fragment {
     RecyclerView mMoviesRecycleView;
     @Bind(R.id.swipe)
     SwipeRefreshLayout mSwipe;
+    @Bind(R.id.progress_bar)
+    ProgressBar mProgressBar;
 
     private InListAdapter mAdapter;
     private Api mApi;
@@ -47,12 +50,18 @@ public class InListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        logger.debug("onCreate");
+
         initData();
+
+        fetchMovies();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        logger.debug("onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_in_list, container, false);
         ButterKnife.bind(this, view);
 
@@ -67,16 +76,8 @@ public class InListFragment extends Fragment {
         mMoviesRecycleView.setAdapter(mAdapter);
 
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);
-        // SwipeRefreshLayout indicator does not appear when the setRefreshing(true) is called before the SwipeRefreshLayout.onMeasure()
-        // reference: http://stackoverflow.com/questions/26858692/swiperefreshlayout-setrefreshing-not-showing-indicator-initially
-        mSwipe.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipe.setRefreshing(true);
-            }
-        });
 
-        fetchMovies();
+        mProgressBar.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
 
         return view;
     }
@@ -108,6 +109,7 @@ public class InListFragment extends Fragment {
                     @Override
                     public void call(InTheater inTheater) {
                         mSwipe.setRefreshing(false);
+                        mProgressBar.setVisibility(View.GONE);
 
                         mAdapter.setMovies(inTheater.getMovies());
                         mAdapter.notifyDataSetChanged();

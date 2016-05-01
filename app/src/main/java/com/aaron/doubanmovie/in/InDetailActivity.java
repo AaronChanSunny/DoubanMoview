@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,10 +74,12 @@ public class InDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String id = getIntent().getStringExtra(EXTRA_ID);
+        String url = getIntent().getStringExtra(EXTRA_IMAGE_URL);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         String casts = getIntent().getStringExtra(EXTRA_CASTS);
 
         getSupportActionBar().setTitle(title);
+        loadBackDrop(url);
 
         mCasts.setText(casts);
 
@@ -141,7 +142,7 @@ public class InDetailActivity extends AppCompatActivity {
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String url) {
-                        loadBackDrop(TextUtils.isEmpty(url) ? getIntent().getStringExtra(EXTRA_IMAGE_URL) : url);
+                        loadBackDrop(url);
                     }
                 }, new Action1<Throwable>() {
                     @Override
