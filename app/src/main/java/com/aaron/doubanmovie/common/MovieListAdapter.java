@@ -36,7 +36,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private List<Movie> mMovies;
     private boolean mIsLoading;
-    private OnLoadMoreCallback onLoadMoreListener;
+    private OnItemClickListener mOnItemClickListener;
+    private OnLoadMoreCallback mOnLoadMoreListener;
 
     public MovieListAdapter() {
         mMovies = new ArrayList<>();
@@ -59,8 +60,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     if (!mIsLoading && totalItemCount <= (lastVisibleItem + VISIBLE_THRESHOLD)) {
                         // End has been reached
                         // Do something
-                        if (onLoadMoreListener != null) {
-                            onLoadMoreListener.onLoadMore();
+                        if (mOnLoadMoreListener != null) {
+                            mOnLoadMoreListener.onLoadMore();
                         }
                         mIsLoading = true;
                     }
@@ -69,8 +70,12 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
     public void setOnLoadMoreListener(OnLoadMoreCallback onLoadMoreListener) {
-        this.onLoadMoreListener = onLoadMoreListener;
+        this.mOnLoadMoreListener = onLoadMoreListener;
     }
 
     public List<Movie> getMovies() {
@@ -168,15 +173,16 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         @Bind(R.id.casts)
         TextView mCasts;
 
-        public ViewHolder1(View itemView) {
+        public ViewHolder1(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Movie movie = mMovies.get(getLayoutPosition());
-                    // InDetailActivity.actionStart(mContext, movie);
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(itemView, getLayoutPosition());
+                    }
                 }
             });
         }
@@ -197,4 +203,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         void onLoadMore();
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
 }
