@@ -1,13 +1,9 @@
 package com.aaron.doubanmovie.top;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.aaron.doubanmovie.R;
@@ -16,12 +12,12 @@ import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.api.gson.Top;
 import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
+import com.aaron.doubanmovie.detail.MovieDetailActivity;
 import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -48,19 +44,21 @@ public class TopListFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        initData();
+    protected int getLayoutResId() {
+        return R.layout.fragment_movie_list;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_top_list, container, false);
-        ButterKnife.bind(this, view);
+    protected void initData() {
+        super.initData();
 
-        logger.debug("onCreateView");
+        mApi = ApiImpl.getInstance(getActivity());
+        mAdapter = new MovieListAdapter();
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
 
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -78,7 +76,7 @@ public class TopListFragment extends BaseFragment {
             @Override
             public void onItemClick(View itemView, int position) {
                 Movie movie = mAdapter.getMovies().get(position);
-                TopDetailActivity.actionStart(getActivity(),
+                MovieDetailActivity.actionStart(getActivity(),
                         movie.getId(),
                         movie.getTitle(),
                         movie.getImages().getLarge(),
@@ -98,19 +96,6 @@ public class TopListFragment extends BaseFragment {
         mProgressBar.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
 
         fetchMovies();
-
-        return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
-
-    private void initData() {
-        mApi = ApiImpl.getInstance(getActivity());
-        mAdapter = new MovieListAdapter();
     }
 
     private void fetchMovies() {
