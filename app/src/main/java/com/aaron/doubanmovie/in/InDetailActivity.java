@@ -1,5 +1,8 @@
 package com.aaron.doubanmovie.in;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,6 +27,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -30,17 +35,11 @@ import rx.schedulers.Schedulers;
 
 public class InDetailActivity extends AppCompatActivity {
 
+    private static final Logger logger = new Logger(InDetailActivity.class);
     public static final String EXTRA_ID = InDetailActivity.class.getName() + ".EXTRA_ID";
     public static final String EXTRA_TITLE = InDetailActivity.class.getName() + ".EXTRA_TITLE";
     public static final String EXTRA_IMAGE_URL = InDetailActivity.class.getName() + ".EXTRA_IMAGE_URL";
     public static final String EXTRA_CASTS = InDetailActivity.class.getName() + ".EXTRA_CASTS";
-
-    private static final Logger logger = new Logger(InDetailActivity.class);
-
-    private Movie mMovieSelected;
-    private Api mApi;
-    private Subscription mSubsMovie;
-    private Subscription mSubsPhoto;
 
     @Bind(R.id.back_drop)
     ImageView mBackDrop;
@@ -54,6 +53,23 @@ public class InDetailActivity extends AppCompatActivity {
     ProgressBar mProgressBar;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+    @Bind(R.id.btn_expand)
+    Button mExpand;
+
+    @OnClick(R.id.btn_expand)
+    void onBtnExpandClicked() {
+        if (!mIsExpanded) {
+            expandSummaryText();
+        } else {
+            collapseSummaryText();
+        }
+    }
+
+    private boolean mIsExpanded;
+    private Movie mMovieSelected;
+    private Api mApi;
+    private Subscription mSubsMovie;
+    private Subscription mSubsPhoto;
 
     public static void actionStart(Context context, String id, String title, String imageUrl, String casts, String genres) {
         Intent intent = new Intent(context, InDetailActivity.class);
@@ -83,6 +99,7 @@ public class InDetailActivity extends AppCompatActivity {
 
         mCasts.setText(casts);
 
+        mIsExpanded = false;
         mApi = ApiImpl.getInstance(this);
 
         fetchMoviePhoto(id);
@@ -156,5 +173,40 @@ public class InDetailActivity extends AppCompatActivity {
         Picasso.with(this)
                 .load(url)
                 .into(mBackDrop);
+    }
+
+    private void expandSummaryText() {
+        Animator animator = ObjectAnimator.ofInt(mSummary, "maxLines", mSummary
+                .getLineCount())
+                .setDuration(200);
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+
+                mExpand.setText(R.string.btn_collapse);
+                mIsExpanded = true;
+            }
+        });
+
+        animator.start();
+    }
+
+    private void collapseSummaryText() {
+        Animator animator = ObjectAnimator.ofInt(mSummary, "maxLines", mSummary.getLineCount(), 4)
+                .setDuration(200);
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+
+                mExpand.setText(R.string.btn_expand);
+                mIsExpanded = false;
+            }
+        });
+
+        animator.start();
     }
 }
