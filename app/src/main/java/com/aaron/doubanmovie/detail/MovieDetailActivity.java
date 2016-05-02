@@ -116,6 +116,7 @@ public class MovieDetailActivity extends BaseActivity {
 
         mListCelebrity.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mListCelebrity.setAdapter(mAdapter);
+        mListCelebrity.setNestedScrollingEnabled(false);
 
         String id = getIntent().getStringExtra(EXTRA_ID);
         String url = getIntent().getStringExtra(EXTRA_IMAGE_URL);
