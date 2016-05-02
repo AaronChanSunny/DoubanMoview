@@ -12,10 +12,7 @@ import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.api.gson.Top;
 import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
-import com.aaron.doubanmovie.detail.MovieDetailActivity;
-import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
-import com.aaron.doubanmovie.util.MovieParser;
 
 import butterknife.Bind;
 import rx.android.schedulers.AndroidSchedulers;
@@ -72,18 +69,6 @@ public class TopListFragment extends BaseFragment {
         mListMovies.setLayoutManager(layoutManager);
 
         mAdapter.bindRecyclerView(mListMovies);
-        mAdapter.setOnItemClickListener(new MovieListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, int position) {
-                Movie movie = mAdapter.getMovies().get(position);
-                MovieDetailActivity.actionStart(getActivity(),
-                        movie.getId(),
-                        movie.getTitle(),
-                        movie.getImages().getLarge(),
-                        MovieParser.parseCasts(movie.getCasts()),
-                        MovieParser.parseGenres(movie.getGenres()));
-            }
-        });
         mAdapter.setOnLoadMoreListener(new MovieListAdapter.OnLoadMoreCallback() {
             @Override
             public void onLoadMore() {

@@ -132,9 +132,9 @@ public class MovieDetailActivity extends BaseActivity {
                         mProgressBar.setVisibility(View.GONE);
 
                         mSummary.setText(movie.getSummary());
-                        mDirectors.setText(MovieParser.parseDirectors(movie.getDirectors()));
+                        mDirectors.setText(MovieParser.parseCelebrities(movie.getDirectors()));
 
-                        mCasts.setText(MovieParser.parseCasts(movie.getCasts()));
+                        mCasts.setText(MovieParser.parseCelebrities(movie.getCasts()));
                     }
                 }, new Action1<Throwable>() {
                     @Override

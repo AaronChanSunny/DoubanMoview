@@ -1,8 +1,7 @@
 package com.aaron.doubanmovie.util;
 
 
-import com.aaron.doubanmovie.model.Cast;
-import com.aaron.doubanmovie.model.Director;
+import com.aaron.doubanmovie.model.Celebrity;
 
 import java.util.List;
 
@@ -13,27 +12,13 @@ public class MovieParser {
 
     private static final String SEPARATOR = "/";
 
-    public static String parseDirectors(List<Director> directors) {
+    public static String parseCelebrities(List<Celebrity> directors) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < directors.size(); i++) {
             sb.append(directors.get(i).getName());
 
             if (i != directors.size() - 1) {
-                sb.append(SEPARATOR);
-            }
-        }
-
-        return sb.toString();
-    }
-
-    public static String parseCasts(List<Cast> casts) {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < casts.size(); i++) {
-            sb.append(casts.get(i).getName());
-
-            if (i != casts.size() - 1) {
                 sb.append(SEPARATOR);
             }
         }

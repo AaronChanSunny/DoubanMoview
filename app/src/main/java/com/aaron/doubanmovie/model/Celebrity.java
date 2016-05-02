@@ -3,9 +3,9 @@ package com.aaron.doubanmovie.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by aaronchan on 16/4/30.
+ * Created by aaronchan on 16/5/2.
  */
-public class Director {
+public class Celebrity {
     @SerializedName("name")
     private String mName;
 
@@ -14,6 +14,6 @@ public class Director {
     }
 
     public void setName(String name) {
-        this.mName = name;
+        mName = name;
     }
 }

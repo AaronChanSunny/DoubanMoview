@@ -21,9 +21,9 @@ public class Movie {
     @SerializedName("images")
     private Images mImages;
     @SerializedName("directors")
-    private List<Director> mDirectors;
+    private List<Celebrity> mDirectors;
     @SerializedName("casts")
-    private List<Cast> mCasts;
+    private List<Celebrity> mCasts;
     @SerializedName("genres")
     private List<String> mGenres;
 
@@ -75,19 +75,19 @@ public class Movie {
         mImages = images;
     }
 
-    public List<Director> getDirectors() {
+    public List<Celebrity> getDirectors() {
         return mDirectors;
     }
 
-    public void setDirectors(List<Director> directors) {
+    public void setDirectors(List<Celebrity> directors) {
         mDirectors = directors;
     }
 
-    public List<Cast> getCasts() {
+    public List<Celebrity> getCasts() {
         return mCasts;
     }
 
-    public void setCasts(List<Cast> casts) {
+    public void setCasts(List<Celebrity> casts) {
         mCasts = casts;
     }
 

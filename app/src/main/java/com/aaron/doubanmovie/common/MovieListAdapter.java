@@ -17,6 +17,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
+import com.aaron.doubanmovie.detail.MovieDetailActivity;
 import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
@@ -42,7 +43,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private List<Movie> mMovies;
     private boolean mIsLoading;
-    private OnItemClickListener mOnItemClickListener;
     private OnLoadMoreCallback mOnLoadMoreListener;
 
     public MovieListAdapter() {
@@ -74,10 +74,6 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             });
         }
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        mOnItemClickListener = onItemClickListener;
     }
 
     public void setOnLoadMoreListener(OnLoadMoreCallback onLoadMoreListener) {
@@ -134,7 +130,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String genres = MovieParser.parseGenres(movie.getGenres());
             itemHolder.mType.setText(genres);
 
-            String casts = MovieParser.parseCasts(movie.getCasts());
+            String casts = MovieParser.parseCelebrities(movie.getCasts());
             itemHolder.mCasts.setText(casts);
 
             String imageUrl = movie.getImages().getLarge();
@@ -215,9 +211,13 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(itemView, getLayoutPosition());
-                    }
+                    Movie movie = mMovies.get(getLayoutPosition());
+                    MovieDetailActivity.actionStart(itemView.getContext(),
+                            movie.getId(),
+                            movie.getTitle(),
+                            movie.getImages().getLarge(),
+                            MovieParser.parseCelebrities(movie.getCasts()),
+                            MovieParser.parseGenres(movie.getGenres()));
                 }
             });
         }
@@ -236,9 +236,5 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public interface OnLoadMoreCallback {
         void onLoadMore();
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(View itemView, int position);
     }
 }
