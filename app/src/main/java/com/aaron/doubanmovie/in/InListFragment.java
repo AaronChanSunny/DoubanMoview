@@ -5,17 +5,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.api.Api;
 import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.api.gson.InTheater;
 import com.aaron.doubanmovie.common.BaseFragment;
+import com.aaron.doubanmovie.common.ExceptionHandler;
 import com.aaron.doubanmovie.common.MovieListAdapter;
 import com.aaron.doubanmovie.util.Logger;
 
 import butterknife.Bind;
+import retrofit2.HttpException;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -87,23 +88,27 @@ public class InListFragment extends BaseFragment {
     private void fetchMovies() {
         addSubscription(
                 mApi.getInTheaters(CITY, 0, 20)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<InTheater>() {
-                    @Override
-                    public void call(InTheater inTheater) {
-                        mSwipe.setRefreshing(false);
-                        mProgressBar.setVisibility(View.GONE);
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<InTheater>() {
+                            @Override
+                            public void call(InTheater inTheater) {
+                                mSwipe.setRefreshing(false);
+                                mProgressBar.setVisibility(View.GONE);
 
-                        mAdapter.setMovies(inTheater.getMovies());
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Toast.makeText(getActivity(), R.string.server_error, Toast.LENGTH_SHORT).show();
-                    }
-                })
+                                mAdapter.setMovies(inTheater.getMovies());
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                logger.error(throwable);
+
+                                if (throwable instanceof HttpException) {
+                                    ExceptionHandler.handleHttpException(getActivity(), (HttpException) throwable);
+                                }
+                            }
+                        })
         );
     }
 
@@ -123,24 +128,24 @@ public class InListFragment extends BaseFragment {
 
         addSubscription(
                 mApi.getInTheaters(CITY, currentSize, 20)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<InTheater>() {
-                    @Override
-                    public void call(InTheater inTheater) {
-                        mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
-                        mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
-                        mAdapter.setLoaded();
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<InTheater>() {
+                            @Override
+                            public void call(InTheater inTheater) {
+                                mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
+                                mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
+                                mAdapter.setLoaded();
 
-                        mAdapter.getMovies().addAll(inTheater.getMovies());
-                        mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        logger.error(throwable);
-                    }
-                })
+                                mAdapter.getMovies().addAll(inTheater.getMovies());
+                                mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
+                            }
+                        }, new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                logger.error(throwable);
+                            }
+                        })
         );
     }
 

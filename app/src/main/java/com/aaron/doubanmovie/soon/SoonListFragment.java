@@ -16,6 +16,7 @@ import com.aaron.doubanmovie.common.MovieListAdapter;
 import com.aaron.doubanmovie.util.Logger;
 
 import butterknife.Bind;
+import retrofit2.HttpException;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -100,6 +101,12 @@ public class SoonListFragment extends BaseFragment {
                     @Override
                     public void call(Throwable throwable) {
                         logger.error(throwable);
+
+                        if (throwable instanceof HttpException) {
+                            if (((HttpException) throwable).code() == 403) {
+                                logger.debug("You API access rate limit has been exceeded.");
+                            }
+                        }
                     }
                 })
         );

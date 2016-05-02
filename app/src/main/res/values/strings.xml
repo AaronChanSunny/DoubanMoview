@@ -9,7 +9,8 @@
     <string name="movie_casts">演职表</string>
     <string name="movie_directors">导演:</string>
     <string name="movie_cast">主演:</string>
-    <string name="server_error">抱歉，服务器异常…</string>
+    <string name="toast_server_error">抱歉，服务器异常…</string>
+    <string name="toast_api_limited">抱歉，已达到豆瓣服务访问上限…</string>
     <string name="title_activity_movie_detail">详情</string>
     <string name="title_activity_home">首页</string>
     <string name="title_fragment_in">正在热映</string>

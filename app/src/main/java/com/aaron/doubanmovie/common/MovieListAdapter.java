@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.detail.MovieDetailActivity;
+import com.aaron.doubanmovie.model.Celebrity;
 import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
@@ -212,12 +213,16 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onClick(View v) {
                     Movie movie = mMovies.get(getLayoutPosition());
+
+                    List<Celebrity> celebrities = new ArrayList<>();
+                    celebrities.addAll(movie.getDirectors());
+                    celebrities.addAll(movie.getCasts());
+
                     MovieDetailActivity.actionStart(itemView.getContext(),
                             movie.getId(),
                             movie.getTitle(),
                             movie.getImages().getLarge(),
-                            MovieParser.parseCelebrities(movie.getCasts()),
-                            MovieParser.parseGenres(movie.getGenres()));
+                            celebrities);
                 }
             });
         }
