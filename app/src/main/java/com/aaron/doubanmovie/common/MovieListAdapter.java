@@ -164,6 +164,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             itemHolder.mImage.setTag(target);
             Picasso.with(itemHolder.mImage.getContext())
                     .load(imageUrl)
+                    .placeholder(R.drawable.ic_image_white_24dp)
                     .into(target);
         } else {
             LoadingViewHolder loadingHolder = (LoadingViewHolder) holder;

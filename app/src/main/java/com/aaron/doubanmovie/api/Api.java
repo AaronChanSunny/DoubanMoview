@@ -21,7 +21,5 @@ public interface Api {
 
     Observable<Top> getTop(int start, int count);
 
-    Observable<List<String>> getMoviePhotos(String id);
-
-    Observable<String> getRandomMoviePhoto(String id);
+    Observable<List<String>> getMoviePhotos(String id, int count);
 }

@@ -6,7 +6,7 @@
     <string name="network_error">网络异常，请稍后尝试。</string>
     <string name="movie_type">类别：</string>
     <string name="movie_summary">剧情梗概</string>
-    <string name="movie_casts">演职表</string>
+    <string name="label_movie_celebrity">演职表</string>
     <string name="movie_directors">导演:</string>
     <string name="movie_cast">主演:</string>
     <string name="toast_server_error">抱歉，服务器异常…</string>
@@ -20,4 +20,5 @@
     <string name="label_rating_unavailable">暂无评分</string>
     <string name="btn_expand">展开</string>
     <string name="btn_collapse">收起</string>
+    <string name="label_movie_photos">剧照</string>
 </resources>

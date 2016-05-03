@@ -25,11 +25,13 @@ import com.aaron.doubanmovie.common.BaseActivity;
 import com.aaron.doubanmovie.common.ExceptionHandler;
 import com.aaron.doubanmovie.model.Celebrity;
 import com.aaron.doubanmovie.model.Movie;
+import com.aaron.doubanmovie.photo.PhotoListAdapter;
 import com.aaron.doubanmovie.util.Logger;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -58,6 +60,8 @@ public class MovieDetailActivity extends BaseActivity {
     Button mExpand;
     @Bind(R.id.list_celebrity)
     RecyclerView mListCelebrity;
+    @Bind(R.id.list_photo)
+    RecyclerView mListPhoto;
 
     @OnClick(R.id.btn_expand)
     void onBtnExpandClicked() {
@@ -70,7 +74,9 @@ public class MovieDetailActivity extends BaseActivity {
 
     private boolean mIsExpanded;
     private List<Celebrity> mCelebrities;
-    private CelebrityListAdapter mAdapter;
+    private List<String> mPhotos;
+    private CelebrityListAdapter mCelebrityAdapter;
+    private PhotoListAdapter mPhotoAdapter;
     private Api mApi;
 
     public static void actionStart(Context context, String id, String title, String imageUrl, List<Celebrity> celebrities) {
@@ -102,8 +108,13 @@ public class MovieDetailActivity extends BaseActivity {
         super.initData();
 
         mApi = ApiImpl.getInstance(this);
+
         mCelebrities = new ArrayList<>();
-        mAdapter = new CelebrityListAdapter(mCelebrities);
+        mCelebrityAdapter = new CelebrityListAdapter(mCelebrities);
+
+        mPhotos = new ArrayList<>();
+        mPhotoAdapter = new PhotoListAdapter(mPhotos);
+
         mIsExpanded = false;
     }
 
@@ -115,8 +126,12 @@ public class MovieDetailActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mListCelebrity.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mListCelebrity.setAdapter(mAdapter);
+        mListCelebrity.setAdapter(mCelebrityAdapter);
         mListCelebrity.setNestedScrollingEnabled(false);
+
+        mListPhoto.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mListPhoto.setAdapter(mPhotoAdapter);
+        mListPhoto.setNestedScrollingEnabled(false);
 
         String id = getIntent().getStringExtra(EXTRA_ID);
         String url = getIntent().getStringExtra(EXTRA_IMAGE_URL);
@@ -130,7 +145,7 @@ public class MovieDetailActivity extends BaseActivity {
 
         fetchMovieDetail(id);
 
-        fetchMoviePhoto(id);
+        fetchMoviePhotos(id, 5);
     }
 
     private void loadBackDrop(String url) {
@@ -141,7 +156,7 @@ public class MovieDetailActivity extends BaseActivity {
 
     private void loadCelebrities(List<Celebrity> celebrities) {
         mCelebrities.addAll(celebrities);
-        mAdapter.notifyDataSetChanged();
+        mCelebrityAdapter.notifyDataSetChanged();
     }
 
     private void fetchMovieDetail(String id) {
@@ -155,7 +170,7 @@ public class MovieDetailActivity extends BaseActivity {
                             @Override
                             public void call(Movie movie) {
                                 mProgressBar.setVisibility(View.GONE);
-
+                                
                                 mSummary.setText(movie.getSummary());
                             }
                         }, new Action1<Throwable>() {
@@ -169,15 +184,19 @@ public class MovieDetailActivity extends BaseActivity {
         );
     }
 
-    private void fetchMoviePhoto(String id) {
+    private void fetchMoviePhotos(String id, int count) {
         addSubscription(
-                mApi.getRandomMoviePhoto(id)
+                mApi.getMoviePhotos(id, count)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Action1<String>() {
+                        .subscribe(new Action1<List<String>>() {
                             @Override
-                            public void call(String url) {
-                                loadBackDrop(url);
+                            public void call(List<String> photos) {
+                                mPhotos.addAll(photos);
+                                mPhotoAdapter.notifyDataSetChanged();
+
+                                String randomPhoto = photos.get(new Random().nextInt(photos.size()));
+                                loadBackDrop(randomPhoto);
                             }
                         }, new Action1<Throwable>() {
                             @Override

@@ -2,6 +2,7 @@ package com.aaron.doubanmovie.api;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.aaron.doubanmovie.api.gson.ComingSoon;
 import com.aaron.doubanmovie.api.gson.InTheater;
@@ -20,7 +21,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -76,7 +76,7 @@ public class ApiImpl implements Api {
     }
 
     @Override
-    public Observable<List<String>> getMoviePhotos(final String id) {
+    public Observable<List<String>> getMoviePhotos(final String id, final int count) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -92,7 +92,7 @@ public class ApiImpl implements Api {
         }).map(new Func1<String, List<String>>() {
             @Override
             public List<String> call(String html) {
-                List<String> images = getImageLinks(html);
+                List<String> images = getImageLinks(html, count);
                 return images;
             }
         }).map(new Func1<List<String>, List<String>>() {
@@ -103,7 +103,10 @@ public class ApiImpl implements Api {
                     try {
                         String html = parseUrl(image);
 
-                        urls.add(getImageUrl(html));
+                        String url = getImageUrl(html);
+                        if (!TextUtils.isEmpty(url)) {
+                            urls.add(getImageUrl(html));
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                         Observable.error(e);
@@ -112,43 +115,6 @@ public class ApiImpl implements Api {
 
                 logger.debug("urls size is " + urls.size());
                 return urls;
-            }
-        });
-    }
-
-    @Override
-    public Observable<String> getRandomMoviePhoto(final String id) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                String url = "https://movie.douban.com/subject/" + id + "/photos?type=S";
-
-                try {
-                    subscriber.onNext(parseUrl(url));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        }).map(new Func1<String, String>() {
-            @Override
-            public String call(String html) {
-                List<String> links = getImageLinks(html);
-                int idx = new Random().nextInt(links.size());
-                return links.get(idx);
-            }
-        }).map(new Func1<String, String>() {
-            @Override
-            public String call(String link) {
-                String url = "";
-                try {
-                    String html = parseUrl(link);
-                    url = getImageUrl(html);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Observable.error(e);
-                }
-                return url;
             }
         });
     }
@@ -163,17 +129,23 @@ public class ApiImpl implements Api {
     }
 
     @NonNull
-    private List<String> getImageLinks(String html) {
+    private List<String> getImageLinks(String html, int count) {
         List<String> images = new ArrayList<>();
 
         Document document = Jsoup.parse(html);
         Element body = document.body();
 
+        int total = 0;
         Elements hrefs = body.select("a[href^=https://movie.douban.com/photos/photo/]");
         for (Element href : hrefs) {
+            if (total >= count) {
+                break;
+            }
+
             String image = href.attr("href");
             if (image.endsWith("/")) {
                 images.add(image);
+                total++;
             }
         }
         return images;
@@ -185,7 +157,7 @@ public class ApiImpl implements Api {
 
         Elements images = body.select("img[src~=(https://img.*?doubanio.com/view/photo/photo/public/)]");
 
-        return images.get(0).attr("src");
+        return images.size() == 0 ? "" : images.get(0).attr("src");
     }
 
 }
