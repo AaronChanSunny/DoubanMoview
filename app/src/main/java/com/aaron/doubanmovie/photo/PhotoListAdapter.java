@@ -54,6 +54,13 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PhotoPreviewActivity.actionStart(v.getContext(), mPhotos.get(getLayoutPosition()));
+                }
+            });
         }
     }
 }

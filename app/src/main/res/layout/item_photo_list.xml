@@ -10,7 +10,6 @@
     android:orientation="vertical">
 
     <ImageView
-        android:src="@drawable/ic_photo"
         android:id="@+id/img_photo"
         android:layout_width="300dp"
         android:layout_height="200dp"
