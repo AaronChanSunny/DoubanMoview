@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
 import com.squareup.picasso.Picasso;
@@ -17,7 +18,10 @@ import butterknife.ButterKnife;
 /**
  * Created by aaronchan on 16/5/2.
  */
-public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.ViewHolder> {
+public class PhotoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int TYPE_EMPTY = 0;
+    private static final int TYPE_ITEM = 1;
 
     private List<String> mPhotos;
 
@@ -26,20 +30,32 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_photo_list, parent, false);
-        return new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder holder = null;
+        if (viewType == TYPE_ITEM) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_photo_list, parent, false);
+            holder = new ItemViewHolder(itemView);
+        } else {
+            View emptyView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_empty, parent, false);
+            holder = new EmptyViewHolder(emptyView);
+        }
+
+        return holder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        String photo = mPhotos.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder.getItemViewType() == TYPE_ITEM) {
+            ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+            String photo = mPhotos.get(position);
 
-        Picasso.with(holder.mImgPhoto.getContext())
-                .load(photo)
-                .placeholder(R.drawable.ic_image_white_24dp)
-                .into(holder.mImgPhoto);
+            Picasso.with(itemViewHolder.mImgPhoto.getContext())
+                    .load(photo)
+                    .placeholder(R.drawable.ic_image_white_24dp)
+                    .into(itemViewHolder.mImgPhoto);
+        }
     }
 
     @Override
@@ -47,11 +63,16 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
         return mPhotos.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public int getItemViewType(int position) {
+        return mPhotos.get(position) == null ? TYPE_EMPTY : TYPE_ITEM;
+    }
+
+    class ItemViewHolder extends RecyclerView.ViewHolder{
         @Bind(R.id.img_photo)
         ImageView mImgPhoto;
 
-        ViewHolder(View itemView) {
+        ItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
@@ -61,6 +82,16 @@ public class PhotoListAdapter extends RecyclerView.Adapter<PhotoListAdapter.View
                     PhotoPreviewActivity.actionStart(v.getContext(), mPhotos.get(getLayoutPosition()));
                 }
             });
+        }
+    }
+
+    class EmptyViewHolder extends RecyclerView.ViewHolder{
+        @Bind(R.id.txt_empty)
+        TextView mTextEmpty;
+
+        EmptyViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

@@ -1,8 +1,12 @@
 package com.aaron.doubanmovie.common;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+
+import com.aaron.doubanmovie.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +54,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 子类重写该方法，进行 View 初始化
      */
     protected void initView() {
-
+        setStatusBarColor(R.color.colorPrimaryDark);
     }
 
     /**
@@ -59,6 +63,16 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected void addSubscription(Subscription subscription) {
         mSubscriptionList.add(subscription);
+    }
+
+    /**
+     * 更改 StatusBar 颜色
+     * @param resId
+     */
+    protected void setStatusBarColor(int resId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, resId));
+        }
     }
 
     /**
@@ -71,4 +85,5 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
     }
+
 }

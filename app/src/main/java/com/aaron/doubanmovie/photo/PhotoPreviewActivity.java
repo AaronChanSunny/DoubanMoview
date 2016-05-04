@@ -3,6 +3,7 @@ package com.aaron.doubanmovie.photo;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,6 +36,16 @@ public class PhotoPreviewActivity extends BaseActivity {
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_photo_preview;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

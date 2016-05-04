@@ -1,10 +1,8 @@
 package com.aaron.doubanmovie.home;
 
-import android.os.Build;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
@@ -56,11 +54,8 @@ public class HomeActivity extends BaseActivity {
 
         setSupportActionBar(mToolbar);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        }
-
         mPager.setAdapter(mPagerAdapter);
         mTab.setupWithViewPager(mPager);
     }
+
 }

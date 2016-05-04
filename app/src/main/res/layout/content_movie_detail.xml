@@ -45,11 +45,11 @@
                         tools:text="毛克利（尼尔·塞西 Neel Sethi 饰）是一个由狼群养大的人类男孩，影片围绕他的森林冒险徐徐展开。谢利·可汗，一只受过人类伤害的老虎（伊德里斯·艾尔巴 Idris Elba 配音），发誓要将毛克利铲除。为了逃脱追捕，毛克利跟随严厉的导师黑豹巴希拉（本·金斯利 Ben Kingsley 配音）和自由自在的好友棕熊巴鲁（比尔·默瑞 Bill Murray 配音），踏上了一场精彩纷呈的自我探索旅程。在这趟旅途中，毛克利遇到了一些对他居心叵测的丛林生物，包括巨蟒卡奥（斯嘉丽·约翰逊 Scarlett Johansson 配音），她用迷人的声音和眼神迷惑毛克利；还有花言巧语的猩猩路易王（克里斯托弗·沃肯 Christopher Walken 配音），他试图通过威逼利诱让毛克利交出迷幻而致命的“红花”——火焰的秘密。当森林不再是安全的家园，毛克利该何去何从？而毕生难忘的伟大冒险，才刚刚拉开序幕……"/>
 
                     <Button
-                        android:id="@+id/btn_expand"
+                        android:id="@+id/btn_summary_more"
                         style="?android:attr/borderlessButtonStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/btn_expand"
+                        android:text="@string/btn_more"
                         android:textColor="@color/colorAccent"/>
 
                 </LinearLayout>
@@ -114,7 +114,8 @@
                         style="?android:attr/borderlessButtonStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/btn_expand"
+                        android:id="@+id/btn_photo_more"
+                        android:text="@string/btn_more"
                         android:textColor="@color/colorAccent"/>
 
                 </LinearLayout>

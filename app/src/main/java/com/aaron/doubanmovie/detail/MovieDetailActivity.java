@@ -26,6 +26,7 @@ import com.aaron.doubanmovie.common.ExceptionHandler;
 import com.aaron.doubanmovie.model.Celebrity;
 import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.photo.PhotoListAdapter;
+import com.aaron.doubanmovie.photo.PhotoWallActivity;
 import com.aaron.doubanmovie.util.Logger;
 import com.squareup.picasso.Picasso;
 
@@ -43,10 +44,10 @@ import rx.schedulers.Schedulers;
 public class MovieDetailActivity extends BaseActivity {
 
     private static final Logger logger = new Logger(MovieDetailActivity.class);
-    public static final String EXTRA_ID = MovieDetailActivity.class.getName() + ".EXTRA_ID";
-    public static final String EXTRA_TITLE = MovieDetailActivity.class.getName() + ".EXTRA_TITLE";
-    public static final String EXTRA_IMAGE_URL = MovieDetailActivity.class.getName() + ".EXTRA_IMAGE_URL";
-    public static final String EXTRA_CELEBRITIES = MovieDetailActivity.class.getName() + "" + ".EXTRA_CELEBRITIES";
+    private static final String EXTRA_ID = MovieDetailActivity.class.getName() + ".EXTRA_ID";
+    private static final String EXTRA_TITLE = MovieDetailActivity.class.getName() + ".EXTRA_TITLE";
+    private static final String EXTRA_IMAGE_URL = MovieDetailActivity.class.getName() + ".EXTRA_IMAGE_URL";
+    private static final String EXTRA_CELEBRITIES = MovieDetailActivity.class.getName() + "" + ".EXTRA_CELEBRITIES";
 
     @Bind(R.id.back_drop)
     ImageView mBackDrop;
@@ -56,14 +57,16 @@ public class MovieDetailActivity extends BaseActivity {
     ProgressBar mProgressBar;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.btn_expand)
+    @Bind(R.id.btn_summary_more)
     Button mExpand;
     @Bind(R.id.list_celebrity)
     RecyclerView mListCelebrity;
     @Bind(R.id.list_photo)
     RecyclerView mListPhoto;
+    @Bind(R.id.btn_photo_more)
+    Button mButtonPhotoMore;
 
-    @OnClick(R.id.btn_expand)
+    @OnClick(R.id.btn_summary_more)
     void onBtnExpandClicked() {
         if (!mIsExpanded) {
             expandSummaryText();
@@ -71,7 +74,15 @@ public class MovieDetailActivity extends BaseActivity {
             collapseSummaryText();
         }
     }
+    @OnClick(R.id.btn_photo_more)
+    void onButtonMoreClicked() {
+        PhotoWallActivity.actionStart(this, mTitle, mId, mPhotos);
+    }
 
+    private String mId;
+    private String mImageUrl;
+    private String mTitle;
+    private List<Celebrity> mCelebritis;
     private boolean mIsExpanded;
     private List<Celebrity> mCelebrities;
     private List<String> mPhotos;
@@ -107,6 +118,11 @@ public class MovieDetailActivity extends BaseActivity {
     protected void initData() {
         super.initData();
 
+        mId = getIntent().getStringExtra(EXTRA_ID);
+        mImageUrl = getIntent().getStringExtra(EXTRA_IMAGE_URL);
+        mTitle = getIntent().getStringExtra(EXTRA_TITLE);
+        mCelebritis = getIntent().getParcelableArrayListExtra(EXTRA_CELEBRITIES);
+
         mApi = ApiImpl.getInstance(this);
 
         mCelebrities = new ArrayList<>();
@@ -122,6 +138,8 @@ public class MovieDetailActivity extends BaseActivity {
     protected void initView() {
         super.initView();
 
+        setStatusBarColor(android.R.color.transparent);
+
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -133,19 +151,14 @@ public class MovieDetailActivity extends BaseActivity {
         mListPhoto.setAdapter(mPhotoAdapter);
         mListPhoto.setNestedScrollingEnabled(false);
 
-        String id = getIntent().getStringExtra(EXTRA_ID);
-        String url = getIntent().getStringExtra(EXTRA_IMAGE_URL);
-        String title = getIntent().getStringExtra(EXTRA_TITLE);
-        List<Celebrity> celebrities = getIntent().getParcelableArrayListExtra(EXTRA_CELEBRITIES);
+        getSupportActionBar().setTitle(mTitle);
 
-        getSupportActionBar().setTitle(title);
+        loadBackDrop(mImageUrl);
+        loadCelebrities(mCelebritis);
 
-        loadBackDrop(url);
-        loadCelebrities(celebrities);
+        fetchMovieDetail(mId);
 
-        fetchMovieDetail(id);
-
-        fetchMoviePhotos(id, 5);
+        fetchMoviePhotos(mId, 5);
     }
 
     private void loadBackDrop(String url) {
@@ -192,6 +205,11 @@ public class MovieDetailActivity extends BaseActivity {
                         .subscribe(new Action1<List<String>>() {
                             @Override
                             public void call(List<String> photos) {
+                                if (photos.size() == 0) {
+                                    showEmptyView();
+                                    return;
+                                }
+
                                 mPhotos.addAll(photos);
                                 mPhotoAdapter.notifyDataSetChanged();
 
@@ -202,9 +220,17 @@ public class MovieDetailActivity extends BaseActivity {
                             @Override
                             public void call(Throwable throwable) {
                                 logger.error(throwable);
+                                showEmptyView();
                             }
                         })
         );
+    }
+
+    private void showEmptyView() {
+        mPhotos.add(null);
+        mPhotoAdapter.notifyDataSetChanged();
+
+        mButtonPhotoMore.setVisibility(View.INVISIBLE);
     }
 
     private void expandSummaryText() {
@@ -234,7 +260,7 @@ public class MovieDetailActivity extends BaseActivity {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
 
-                mExpand.setText(R.string.btn_expand);
+                mExpand.setText(R.string.btn_more);
                 mIsExpanded = false;
             }
         });
