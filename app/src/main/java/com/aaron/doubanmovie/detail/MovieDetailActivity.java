@@ -145,11 +145,9 @@ public class MovieDetailActivity extends BaseActivity {
 
         mListCelebrity.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mListCelebrity.setAdapter(mCelebrityAdapter);
-        mListCelebrity.setNestedScrollingEnabled(false);
 
         mListPhoto.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mListPhoto.setAdapter(mPhotoAdapter);
-        mListPhoto.setNestedScrollingEnabled(false);
 
         getSupportActionBar().setTitle(mTitle);
 
