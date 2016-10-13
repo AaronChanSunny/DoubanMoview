@@ -80,13 +80,7 @@ public class ApiImpl implements Api {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
-                String url = "<html>\n" +
-                        "<head><title>403 Forbidden</title></head>\n" +
-                        "<body bgcolor=\"white\">\n" +
-                        "<center><h1>403 Forbidden</h1></center>\n" +
-                        "<hr><center>dae</center>\n" +
-                        "</body>\n" +
-                        "</html>\n";
+                String url = "https://movie.douban.com/subject/" + id + "/photos?type=S";
 
                 try {
                     subscriber.onNext(parseUrl(url));

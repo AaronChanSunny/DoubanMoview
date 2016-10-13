@@ -7,24 +7,19 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.api.Api;
-import com.aaron.doubanmovie.api.ApiImpl;
-import com.aaron.doubanmovie.api.gson.InTheater;
 import com.aaron.doubanmovie.common.BaseFragment;
-import com.aaron.doubanmovie.common.ExceptionHandler;
 import com.aaron.doubanmovie.common.MovieListAdapter;
+import com.aaron.doubanmovie.model.Movie;
 import com.aaron.doubanmovie.util.Logger;
 
+import java.util.List;
+
 import butterknife.Bind;
-import retrofit2.HttpException;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by aaronchan on 16/4/27.
  */
-public class InListFragment extends BaseFragment {
+public class InListFragment extends BaseFragment implements InListFragmentPresenter.IView {
     private static final Logger logger = new Logger(InListFragment.class);
     private static final String CITY = "福州";
 
@@ -36,7 +31,8 @@ public class InListFragment extends BaseFragment {
     ProgressBar mProgressBar;
 
     private MovieListAdapter mAdapter;
-    private Api mApi;
+
+    private InListFragmentPresenter mPresenter;
 
     public static InListFragment newInstance() {
         return new InListFragment();
@@ -51,8 +47,8 @@ public class InListFragment extends BaseFragment {
     protected void initData() {
         super.initData();
 
-        mApi = ApiImpl.getInstance(getActivity());
         mAdapter = new MovieListAdapter();
+        mPresenter = new InListFragmentPresenterImpl(getContext(), this);
     }
 
     @Override
@@ -62,7 +58,7 @@ public class InListFragment extends BaseFragment {
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchMovies();
+                mPresenter.fetchMovies(CITY);
             }
         });
 
@@ -73,7 +69,7 @@ public class InListFragment extends BaseFragment {
         mAdapter.setOnLoadMoreListener(new MovieListAdapter.OnLoadMoreCallback() {
             @Override
             public void onLoadMore() {
-                fetchMoreMovies();
+                mPresenter.fetchMoreMovies(CITY);
             }
         });
         mListMovies.setAdapter(mAdapter);
@@ -82,71 +78,61 @@ public class InListFragment extends BaseFragment {
 
         mProgressBar.setVisibility(mAdapter.getItemCount() > 0 ? View.GONE : View.VISIBLE);
 
-        fetchMovies();
+        mPresenter.fetchMovies(CITY);
     }
 
-    private void fetchMovies() {
-        addSubscription(
-                mApi.getInTheaters(CITY, 0, 20)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Action1<InTheater>() {
-                            @Override
-                            public void call(InTheater inTheater) {
-                                mSwipe.setRefreshing(false);
-                                mProgressBar.setVisibility(View.GONE);
-
-                                mAdapter.setMovies(inTheater.getMovies());
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                logger.error(throwable);
-
-                                if (throwable instanceof HttpException) {
-                                    ExceptionHandler.handleHttpException(getActivity(), (HttpException) throwable);
-                                }
-                            }
-                        })
-        );
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroy();
     }
 
     public void refreshMovies() {
         mSwipe.setRefreshing(true);
         mListMovies.smoothScrollToPosition(0);
 
-        fetchMovies();
+        mPresenter.fetchMovies(CITY);
     }
 
-    private void fetchMoreMovies() {
-        // add progress item
+    @Override
+    public void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        mSwipe.setRefreshing(false);
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void refreshMovies(List<Movie> movies) {
+        mAdapter.setMovies(movies);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void addRefreshProgress() {
         mAdapter.getMovies().add(null);
         mAdapter.notifyItemInserted(mAdapter.getMovies().size() - 1);
+    }
 
-        final int currentSize = mAdapter.getItemCount();
+    @Override
+    public void removeRefreshProgress() {
+        mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
+        mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
+        mAdapter.setLoaded();
+    }
 
-        addSubscription(
-                mApi.getInTheaters(CITY, currentSize, 20)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Action1<InTheater>() {
-                            @Override
-                            public void call(InTheater inTheater) {
-                                mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
-                                mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
-                                mAdapter.setLoaded();
+    @Override
+    public int getItemsCount() {
+        return mAdapter.getItemCount();
+    }
 
-                                mAdapter.getMovies().addAll(inTheater.getMovies());
-                                mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                logger.error(throwable);
-                            }
-                        })
-        );
+    @Override
+    public void loadMoreMovies(int currentSize, List<Movie> movies) {
+        mAdapter.getMovies().addAll(movies);
+        mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
     }
 
 }

@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.api.Api;
-import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.common.BaseActivity;
 import com.aaron.doubanmovie.common.DividerGridItemDecoration;
 import com.aaron.doubanmovie.util.Logger;
@@ -20,11 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
-public class PhotoWallActivity extends BaseActivity {
+public class PhotoWallActivity extends BaseActivity implements PhotoWallActivityPresenter.IView {
 
     private static final Logger logger = new Logger(PhotoWallActivity.class);
     private static final String EXTRA_TITLE = PhotoWallActivity.class.getName() + ".EXTRA_TITLE";
@@ -42,7 +37,8 @@ public class PhotoWallActivity extends BaseActivity {
     private String mId;
     private List<String> mPhotos;
     private PhotoWallAdapter mAdapter;
-    private Api mApi;
+
+    private PhotoWallActivityPresenter mPresenter;
 
     public static void actionStart(Context context, String title, String id, List<String> loaded) {
         Intent intent = new Intent(context, PhotoWallActivity.class);
@@ -71,8 +67,6 @@ public class PhotoWallActivity extends BaseActivity {
     protected void initData() {
         super.initData();
 
-        mApi = ApiImpl.getInstance(this);
-
         mPhotos = new ArrayList<>();
 
         mTitle = getIntent().getStringExtra(EXTRA_TITLE);
@@ -81,6 +75,8 @@ public class PhotoWallActivity extends BaseActivity {
         mPhotos.addAll(getIntent().getStringArrayListExtra(EXTRA_LOADED));
 
         mAdapter = new PhotoWallAdapter(mPhotos);
+
+        mPresenter = new PhotoWallActivityPresenterImpl(this, this);
     }
 
     @Override
@@ -96,31 +92,23 @@ public class PhotoWallActivity extends BaseActivity {
         mListPhoto.addItemDecoration(new DividerGridItemDecoration(this));
         mListPhoto.setAdapter(mAdapter);
 
-        fetchAllPhotos(mId);
+        mPresenter.fetchAllPhotos(mId);
     }
 
-    private void fetchAllPhotos(String id) {
+    @Override
+    public void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
+    }
 
-        addSubscription(
-                mApi.getMoviePhotos(id, Integer.MAX_VALUE)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Action1<List<String>>() {
-                            @Override
-                            public void call(List<String> photos) {
-                                mProgressBar.setVisibility(View.GONE);
+    @Override
+    public void hideProgressBar() {
+        mProgressBar.setVisibility(View.GONE);
+    }
 
-                                mPhotos.clear();
-                                mPhotos.addAll(photos);
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                logger.error(throwable);
-                            }
-                        })
-        );
+    @Override
+    public void showAllPhotos(List<String> photos) {
+        mPhotos.clear();
+        mPhotos.addAll(photos);
+        mAdapter.notifyDataSetChanged();
     }
 }
