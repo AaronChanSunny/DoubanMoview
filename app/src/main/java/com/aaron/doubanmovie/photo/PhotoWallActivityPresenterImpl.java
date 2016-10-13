@@ -51,6 +51,7 @@ public class PhotoWallActivityPresenterImpl implements PhotoWallActivityPresente
                     @Override
                     public void call(Throwable throwable) {
                         LogUtil.error(TAG, "fetchAllPhotos", throwable);
+                        mView.hideProgressBar();
                     }
                 });
         mAllSubscription.add(subscription);
