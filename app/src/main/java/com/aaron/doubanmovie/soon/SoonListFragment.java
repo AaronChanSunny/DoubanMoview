@@ -8,14 +8,14 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.api.Api;
-import com.aaron.doubanmovie.api.ApiImpl;
-import com.aaron.doubanmovie.api.gson.ComingSoon;
 import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
-import com.aaron.doubanmovie.util.Logger;
 
 import butterknife.Bind;
+import me.aaron.base.util.Logger;
+import me.aaron.dao.api.Api;
+import me.aaron.dao.api.ApiImpl;
+import me.aaron.dao.api.gson.ComingSoon;
 import retrofit2.HttpException;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;

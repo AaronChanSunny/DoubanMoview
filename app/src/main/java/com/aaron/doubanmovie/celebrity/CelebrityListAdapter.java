@@ -8,13 +8,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.model.Celebrity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import me.aaron.dao.model.Celebrity;
 
 /**
  * Created by aaronchan on 16/5/2.

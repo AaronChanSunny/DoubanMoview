@@ -18,14 +18,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.api.Api;
-import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.celebrity.CelebrityListAdapter;
 import com.aaron.doubanmovie.common.BaseActivity;
-import com.aaron.doubanmovie.model.Celebrity;
 import com.aaron.doubanmovie.photo.PhotoListAdapter;
 import com.aaron.doubanmovie.photo.PhotoWallActivity;
-import com.aaron.doubanmovie.util.Logger;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -33,6 +29,10 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import me.aaron.base.util.Logger;
+import me.aaron.dao.api.Api;
+import me.aaron.dao.api.ApiImpl;
+import me.aaron.dao.model.Celebrity;
 
 public class MovieDetailActivity extends BaseActivity implements MovieDetailActivityPresenter.IView {
 

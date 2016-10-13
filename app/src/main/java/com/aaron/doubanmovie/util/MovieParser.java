@@ -1,9 +1,9 @@
 package com.aaron.doubanmovie.util;
 
 
-import com.aaron.doubanmovie.model.Celebrity;
-
 import java.util.List;
+
+import me.aaron.dao.model.Celebrity;
 
 /**
  * Created by OA on 2016/1/26.

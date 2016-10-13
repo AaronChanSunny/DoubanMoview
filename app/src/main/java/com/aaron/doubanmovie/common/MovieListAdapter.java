@@ -18,9 +18,6 @@ import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.detail.MovieDetailActivity;
-import com.aaron.doubanmovie.model.Celebrity;
-import com.aaron.doubanmovie.model.Movie;
-import com.aaron.doubanmovie.util.Logger;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -31,6 +28,9 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import me.aaron.base.util.Logger;
+import me.aaron.dao.model.Celebrity;
+import me.aaron.dao.model.Movie;
 
 /**
  * Created by Git on 2016/1/23.

@@ -2,12 +2,12 @@ package com.aaron.doubanmovie.in;
 
 import android.content.Context;
 
-import com.aaron.doubanmovie.api.Api;
-import com.aaron.doubanmovie.api.ApiImpl;
-import com.aaron.doubanmovie.api.gson.InTheater;
 import com.aaron.doubanmovie.common.ExceptionHandler;
 import com.aaron.doubanmovie.util.LogUtil;
 
+import me.aaron.dao.api.Api;
+import me.aaron.dao.api.ApiImpl;
+import me.aaron.dao.api.gson.InTheater;
 import retrofit2.HttpException;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;

@@ -2,12 +2,12 @@ package com.aaron.doubanmovie.photo;
 
 import android.content.Context;
 
-import com.aaron.doubanmovie.api.Api;
-import com.aaron.doubanmovie.api.ApiImpl;
 import com.aaron.doubanmovie.util.LogUtil;
 
 import java.util.List;
 
+import me.aaron.dao.api.Api;
+import me.aaron.dao.api.ApiImpl;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;

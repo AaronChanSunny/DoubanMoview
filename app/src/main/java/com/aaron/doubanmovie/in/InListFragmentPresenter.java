@@ -1,8 +1,9 @@
 package com.aaron.doubanmovie.in;
 
-import com.aaron.doubanmovie.model.Movie;
 
 import java.util.List;
+
+import me.aaron.dao.model.Movie;
 
 /**
  * Created by Chenll on 2016/10/13.

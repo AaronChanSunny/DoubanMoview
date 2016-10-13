@@ -12,12 +12,12 @@ import android.widget.ProgressBar;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.common.BaseActivity;
 import com.aaron.doubanmovie.common.DividerGridItemDecoration;
-import com.aaron.doubanmovie.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import me.aaron.base.util.Logger;
 
 public class PhotoWallActivity extends BaseActivity implements PhotoWallActivityPresenter.IView {
 

@@ -9,12 +9,12 @@ import android.widget.ProgressBar;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
-import com.aaron.doubanmovie.model.Movie;
-import com.aaron.doubanmovie.util.Logger;
 
 import java.util.List;
 
 import butterknife.Bind;
+import me.aaron.base.util.Logger;
+import me.aaron.dao.model.Movie;
 
 /**
  * Created by aaronchan on 16/4/27.
