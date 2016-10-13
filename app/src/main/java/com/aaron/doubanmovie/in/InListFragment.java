@@ -6,11 +6,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.aaron.doubanmovie.App;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import me.aaron.base.util.Logger;
@@ -32,7 +35,8 @@ public class InListFragment extends BaseFragment implements InListFragmentPresen
 
     private MovieListAdapter mAdapter;
 
-    private InListFragmentPresenter mPresenter;
+    @Inject
+    InListFragmentPresenter mPresenter;
 
     public static InListFragment newInstance() {
         return new InListFragment();
@@ -48,7 +52,17 @@ public class InListFragment extends BaseFragment implements InListFragmentPresen
         super.initData();
 
         mAdapter = new MovieListAdapter();
-        mPresenter = new InListFragmentPresenterImpl(getContext(), this);
+    }
+
+    @Override
+    protected void initDi() {
+        super.initDi();
+        DaggerInListFragmentComponent
+                .builder()
+                .appComponent(App.getInstane(getContext()).getAppComponent())
+                .inListFragmentModule(new InListFragmentModule(this))
+                .build()
+                .inject(this);
     }
 
     @Override

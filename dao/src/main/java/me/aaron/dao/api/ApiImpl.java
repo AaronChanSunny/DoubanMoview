@@ -1,6 +1,5 @@
 package me.aaron.dao.api;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -17,14 +16,10 @@ import me.aaron.base.util.Logger;
 import me.aaron.dao.api.gson.ComingSoon;
 import me.aaron.dao.api.gson.InTheater;
 import me.aaron.dao.api.gson.Top;
-import me.aaron.dao.api.http.OkHttpProvider;
-import me.aaron.dao.api.retrofit.ApiService;
-import me.aaron.dao.api.retrofit.RetrofitProvider;
 import me.aaron.dao.model.Movie;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import retrofit2.Retrofit;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
@@ -36,23 +31,12 @@ public class ApiImpl implements Api {
 
     private static final Logger logger = new Logger(ApiImpl.class);
 
-    private static ApiImpl sInstance;
-
     private ApiService mApiService;
     private OkHttpClient mOkHttpClient;
 
-    public static ApiImpl getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new ApiImpl(context);
-        }
-        return sInstance;
-    }
-
-    private ApiImpl(Context context) {
-        Retrofit retrofit = RetrofitProvider.getInstance(context).getRetrofit();
-        mApiService = retrofit.create(ApiService.class);
-
-        mOkHttpClient = OkHttpProvider.getInstance(context).getOkHttpClient();
+    public ApiImpl(ApiService apiService, OkHttpClient okHttpClient) {
+        mApiService = apiService;
+        mOkHttpClient = okHttpClient;
     }
 
     @Override

@@ -6,14 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.aaron.doubanmovie.App;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.common.BaseFragment;
 import com.aaron.doubanmovie.common.MovieListAdapter;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import me.aaron.base.util.Logger;
 import me.aaron.dao.api.Api;
-import me.aaron.dao.api.ApiImpl;
 import me.aaron.dao.api.gson.Top;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -32,7 +34,9 @@ public class TopListFragment extends BaseFragment {
     @Bind(R.id.progress_bar)
     ProgressBar mProgressBar;
 
-    private Api mApi;
+    @Inject
+    Api mApi;
+
     private MovieListAdapter mAdapter;
 
     public static TopListFragment newInstance() {
@@ -49,8 +53,17 @@ public class TopListFragment extends BaseFragment {
     protected void initData() {
         super.initData();
 
-        mApi = ApiImpl.getInstance(getActivity());
         mAdapter = new MovieListAdapter();
+    }
+
+    @Override
+    protected void initDi() {
+        super.initDi();
+        DaggerTopListFragmentComponent
+                .builder()
+                .appComponent(App.getInstane(getContext()).getAppComponent())
+                .build()
+                .inject(this);
     }
 
     @Override

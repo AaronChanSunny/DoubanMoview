@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.aaron.doubanmovie.App;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.celebrity.CelebrityListAdapter;
 import com.aaron.doubanmovie.common.BaseActivity;
@@ -27,11 +28,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 import me.aaron.base.util.Logger;
-import me.aaron.dao.api.Api;
-import me.aaron.dao.api.ApiImpl;
 import me.aaron.dao.model.Celebrity;
 
 public class MovieDetailActivity extends BaseActivity implements MovieDetailActivityPresenter.IView {
@@ -68,9 +69,9 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailActi
     private List<String> mPhotos;
     private CelebrityListAdapter mCelebrityAdapter;
     private PhotoListAdapter mPhotoAdapter;
-    private Api mApi;
 
-    private MovieDetailActivityPresenter mPresenter;
+    @Inject
+    MovieDetailActivityPresenter mPresenter;
 
     public static void actionStart(Context context, String id, String title, String imageUrl, List<Celebrity> celebrities) {
         Intent intent = new Intent(context, MovieDetailActivity.class);
@@ -105,8 +106,6 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailActi
         mTitle = getIntent().getStringExtra(EXTRA_TITLE);
         mCelebritis = getIntent().getParcelableArrayListExtra(EXTRA_CELEBRITIES);
 
-        mApi = ApiImpl.getInstance(this);
-
         mCelebrities = new ArrayList<>();
         mCelebrityAdapter = new CelebrityListAdapter(mCelebrities);
 
@@ -114,8 +113,17 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailActi
         mPhotoAdapter = new PhotoListAdapter(mPhotos);
 
         mIsExpanded = false;
+    }
 
-        mPresenter = new MovieDetailActivityPresenterImpl(this, this);
+    @Override
+    protected void initDi() {
+        super.initDi();
+        DaggerMovieDetailActivityComponent
+                .builder()
+                .appComponent(App.getInstane(this).getAppComponent())
+                .movieDetailModule(new MovieDetailModule(this))
+                .build()
+                .inject(this);
     }
 
     @Override

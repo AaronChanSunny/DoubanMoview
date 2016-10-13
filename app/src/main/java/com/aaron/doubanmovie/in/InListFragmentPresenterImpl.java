@@ -6,7 +6,6 @@ import com.aaron.doubanmovie.common.ExceptionHandler;
 import com.aaron.doubanmovie.util.LogUtil;
 
 import me.aaron.dao.api.Api;
-import me.aaron.dao.api.ApiImpl;
 import me.aaron.dao.api.gson.InTheater;
 import retrofit2.HttpException;
 import rx.Subscription;
@@ -23,16 +22,16 @@ import static android.content.ContentValues.TAG;
 public class InListFragmentPresenterImpl implements InListFragmentPresenter {
 
     private Context mContext;
+    private Api mApi;
     private IView mView;
     private CompositeSubscription mAllSubscription;
-    private Api mApi;
 
-    public InListFragmentPresenterImpl(Context context, IView view) {
-        mContext = context.getApplicationContext();
+    public InListFragmentPresenterImpl(Context context, IView view, Api api) {
+        mContext = context;
         mView = view;
+        mApi = api;
 
         mAllSubscription = new CompositeSubscription();
-        mApi = ApiImpl.getInstance(mContext);
     }
 
     @Override

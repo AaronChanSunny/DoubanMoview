@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Random;
 
 import me.aaron.dao.api.Api;
-import me.aaron.dao.api.ApiImpl;
 import me.aaron.dao.model.Movie;
 import retrofit2.HttpException;
 import rx.Subscription;
@@ -25,17 +24,17 @@ import static android.content.ContentValues.TAG;
  */
 public class MovieDetailActivityPresenterImpl implements MovieDetailActivityPresenter {
 
-    private final Api mApi;
     private Context mContext;
+    private Api mApi;
     private IView mView;
     private CompositeSubscription mAllSubscription;
 
-    public MovieDetailActivityPresenterImpl(Context context, IView view) {
-        mContext = context.getApplicationContext();
+    public MovieDetailActivityPresenterImpl(Context context, IView view, Api api) {
+        mContext = context;
         mView = view;
+        mApi = api;
 
         mAllSubscription = new CompositeSubscription();
-        mApi = ApiImpl.getInstance(mContext);
     }
 
     @Override

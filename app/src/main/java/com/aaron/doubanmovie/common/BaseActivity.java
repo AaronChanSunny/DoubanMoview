@@ -34,7 +34,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         initData();
 
+        initDi();
+
         initView();
+    }
+
+    /**
+     * 依赖注入
+     */
+    protected void initDi() {
     }
 
     @Override
@@ -59,6 +67,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * Fragment 中生成的所有 RxJava Subscription 都需要调用此方法添加到队列
+     *
      * @param subscription
      */
     protected void addSubscription(Subscription subscription) {
@@ -67,6 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 更改 StatusBar 颜色
+     *
      * @param resId
      */
     protected void setStatusBarColor(int resId) {

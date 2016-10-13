@@ -37,6 +37,14 @@ public abstract class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         initData();
+
+        initDi();
+    }
+
+    /**
+     * 依赖注入
+     */
+    protected void initDi() {
     }
 
     @Nullable

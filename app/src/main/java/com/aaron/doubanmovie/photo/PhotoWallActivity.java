@@ -9,12 +9,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.aaron.doubanmovie.App;
 import com.aaron.doubanmovie.R;
 import com.aaron.doubanmovie.common.BaseActivity;
 import com.aaron.doubanmovie.common.DividerGridItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import me.aaron.base.util.Logger;
@@ -38,7 +41,8 @@ public class PhotoWallActivity extends BaseActivity implements PhotoWallActivity
     private List<String> mPhotos;
     private PhotoWallAdapter mAdapter;
 
-    private PhotoWallActivityPresenter mPresenter;
+    @Inject
+    PhotoWallActivityPresenter mPresenter;
 
     public static void actionStart(Context context, String title, String id, List<String> loaded) {
         Intent intent = new Intent(context, PhotoWallActivity.class);
@@ -75,8 +79,17 @@ public class PhotoWallActivity extends BaseActivity implements PhotoWallActivity
         mPhotos.addAll(getIntent().getStringArrayListExtra(EXTRA_LOADED));
 
         mAdapter = new PhotoWallAdapter(mPhotos);
+    }
 
-        mPresenter = new PhotoWallActivityPresenterImpl(this, this);
+    @Override
+    protected void initDi() {
+        super.initDi();
+        DaggerPhotoWallActivityComponent
+                .builder()
+                .appComponent(App.getInstane(this).getAppComponent())
+                .photoWallActivityModule(new PhotoWallActivityModule(this))
+                .build()
+                .inject(this);
     }
 
     @Override

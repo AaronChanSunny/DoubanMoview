@@ -7,7 +7,6 @@ import com.aaron.doubanmovie.util.LogUtil;
 import java.util.List;
 
 import me.aaron.dao.api.Api;
-import me.aaron.dao.api.ApiImpl;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -22,16 +21,17 @@ import static android.content.ContentValues.TAG;
 public class PhotoWallActivityPresenterImpl implements PhotoWallActivityPresenter {
 
     private Context mContext;
-    private IView mView;
-    private CompositeSubscription mAllSubscription;
     private Api mApi;
 
-    public PhotoWallActivityPresenterImpl(Context context, IView view) {
+    private IView mView;
+    private CompositeSubscription mAllSubscription;
+
+    public PhotoWallActivityPresenterImpl(Context context, IView view, Api api) {
         mContext = context;
         mView = view;
+        mApi = api;
 
         mAllSubscription = new CompositeSubscription();
-        mApi = ApiImpl.getInstance(context);
     }
 
     @Override

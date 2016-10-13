@@ -1,4 +1,4 @@
-package me.aaron.dao.api.retrofit;
+package me.aaron.dao.api;
 
 
 import me.aaron.dao.api.gson.ComingSoon;
