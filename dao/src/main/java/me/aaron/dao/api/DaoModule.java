@@ -10,6 +10,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import me.aaron.dao.api.retrofit.ApiErrorAwareConverterFactory;
+import me.aaron.dao.api.retrofit.EmptyJsonConverterFactory;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.GsonConverterFactory;
@@ -56,7 +58,9 @@ public class DaoModule {
     @Provides
     Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(new ApiErrorAwareConverterFactory(
+                        new EmptyJsonConverterFactory(GsonConverterFactory.create(gson))
+                ))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .baseUrl(mBaseUrl)
                 .client(okHttpClient)
