@@ -17,7 +17,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.aaron.doubanmovie.R;
-import com.aaron.doubanmovie.detail.MovieDetailActivity;
+import com.aaron.doubanmovie.bz.detail.MovieDetailActivity;
 import com.aaron.doubanmovie.util.MovieParser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
