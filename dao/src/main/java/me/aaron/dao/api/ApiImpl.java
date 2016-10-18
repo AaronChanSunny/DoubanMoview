@@ -22,7 +22,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
 
 /**
  * Created by aaronchan on 16/4/22.
@@ -73,33 +72,27 @@ public class ApiImpl implements Api {
                     subscriber.onError(e);
                 }
             }
-        }).map(new Func1<String, List<String>>() {
-            @Override
-            public List<String> call(String html) {
-                List<String> images = getImageLinks(html, count);
-                return images;
-            }
-        }).map(new Func1<List<String>, List<String>>() {
-            @Override
-            public List<String> call(List<String> images) {
-                List<String> urls = new ArrayList<>();
-                for (String image : images) {
-                    try {
-                        String html = parseUrl(image);
+        }).map(html -> {
+            List<String> images = getImageLinks(html, count);
+            return images;
+        }).map(images -> {
+            List<String> urls = new ArrayList<>();
+            for (String image : images) {
+                try {
+                    String html = parseUrl(image);
 
-                        String url = getImageUrl(html);
-                        if (!TextUtils.isEmpty(url)) {
-                            urls.add(getImageUrl(html));
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Observable.error(e);
+                    String url = getImageUrl(html);
+                    if (!TextUtils.isEmpty(url)) {
+                        urls.add(getImageUrl(html));
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Observable.error(e);
                 }
-
-                logger.debug("urls size is " + urls.size());
-                return urls;
             }
+
+            logger.debug("urls size is " + urls.size());
+            return urls;
         });
     }
 

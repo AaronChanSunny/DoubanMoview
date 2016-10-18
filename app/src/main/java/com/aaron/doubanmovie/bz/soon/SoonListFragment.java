@@ -17,10 +17,8 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import me.aaron.base.util.Logger;
 import me.aaron.dao.api.Api;
-import me.aaron.dao.api.gson.ComingSoon;
 import retrofit2.HttpException;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class SoonListFragment extends BaseFragment {
@@ -71,23 +69,13 @@ public class SoonListFragment extends BaseFragment {
         super.initView();
 
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);
-        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchMovies();
-            }
-        });
+        mSwipe.setOnRefreshListener(() -> fetchMovies());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mListMovies.setLayoutManager(layoutManager);
 
         mAdapter.bindRecyclerView(mListMovies);
-        mAdapter.setOnLoadMoreListener(new MovieListAdapter.OnLoadMoreCallback() {
-            @Override
-            public void onLoadMore() {
-                fetchMoreMovies();
-            }
-        });
+        mAdapter.setOnLoadMoreListener(() -> fetchMoreMovies());
 
         mListMovies.setAdapter(mAdapter);
 
@@ -101,24 +89,18 @@ public class SoonListFragment extends BaseFragment {
                 mApi.getComingSoon(0, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<ComingSoon>() {
-                    @Override
-                    public void call(ComingSoon comingSoon) {
-                        mSwipe.setRefreshing(false);
-                        mProgressBar.setVisibility(View.GONE);
+                .subscribe(comingSoon -> {
+                    mSwipe.setRefreshing(false);
+                    mProgressBar.setVisibility(View.GONE);
 
-                        mAdapter.setMovies(comingSoon.getMovies());
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        logger.error(throwable);
+                    mAdapter.setMovies(comingSoon.getMovies());
+                    mAdapter.notifyDataSetChanged();
+                }, throwable -> {
+                    logger.error(throwable);
 
-                        if (throwable instanceof HttpException) {
-                            if (((HttpException) throwable).code() == 403) {
-                                logger.debug("You API access rate limit has been exceeded.");
-                            }
+                    if (throwable instanceof HttpException) {
+                        if (((HttpException) throwable).code() == 403) {
+                            logger.debug("You API access rate limit has been exceeded.");
                         }
                     }
                 })
@@ -136,23 +118,15 @@ public class SoonListFragment extends BaseFragment {
                 mApi.getComingSoon(currentSize, 20)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Action1<ComingSoon>() {
-                            @Override
-                            public void call(ComingSoon comingSoon) {
-                                mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
-                                mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
+                        .subscribe(comingSoon -> {
+                            mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
+                            mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
 
-                                mAdapter.getMovies().addAll(comingSoon.getMovies());
-                                mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
+                            mAdapter.getMovies().addAll(comingSoon.getMovies());
+                            mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
 
-                                mAdapter.setLoaded();
-                            }
-                        }, new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                logger.error(throwable);
-                            }
-                        })
+                            mAdapter.setLoaded();
+                        }, logger::error)
         );
     }
 }

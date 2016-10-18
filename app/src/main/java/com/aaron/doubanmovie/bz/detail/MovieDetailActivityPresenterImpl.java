@@ -5,15 +5,12 @@ import android.content.Context;
 import com.aaron.doubanmovie.common.ExceptionHandler;
 import com.aaron.doubanmovie.util.LogUtil;
 
-import java.util.List;
 import java.util.Random;
 
 import me.aaron.dao.api.Api;
-import me.aaron.dao.model.Movie;
 import retrofit2.HttpException;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -44,19 +41,13 @@ public class MovieDetailActivityPresenterImpl implements MovieDetailActivityPres
         Subscription subscription = mApi.getMovie(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Movie>() {
-                    @Override
-                    public void call(Movie movie) {
-                        mView.hideProgressBar();
+                .subscribe(movie -> {
+                    mView.hideProgressBar();
 
-                        mView.setSummary(movie.getSummary());
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        LogUtil.error(TAG, "fetchMovieDetail", throwable);
-                        ExceptionHandler.handleHttpException(mContext, (HttpException) throwable);
-                    }
+                    mView.setSummary(movie.getSummary());
+                }, throwable -> {
+                    LogUtil.error(TAG, "fetchMovieDetail", throwable);
+                    ExceptionHandler.handleHttpException(mContext, (HttpException) throwable);
                 });
         mAllSubscription.add(subscription);
     }
@@ -66,27 +57,21 @@ public class MovieDetailActivityPresenterImpl implements MovieDetailActivityPres
         mApi.getMoviePhotos(id, count)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<String>>() {
-                    @Override
-                    public void call(List<String> photos) {
-                        if (photos.size() == 0) {
-                            mView.showEmptyView();
-                            return;
-                        }
-
-                        mView.refreshPhotos(photos);
-
-                        String randomPhoto = photos.get(new Random().nextInt(photos.size()));
-                        mView.loadBackDrop(randomPhoto);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        LogUtil.error(TAG, "fetchMoviePhotos", throwable);
-                        ExceptionHandler.handleHttpException(mContext, (HttpException) throwable);
-
+                .subscribe(photos -> {
+                    if (photos.size() == 0) {
                         mView.showEmptyView();
+                        return;
                     }
+
+                    mView.refreshPhotos(photos);
+
+                    String randomPhoto = photos.get(new Random().nextInt(photos.size()));
+                    mView.loadBackDrop(randomPhoto);
+                }, throwable -> {
+                    LogUtil.error(TAG, "fetchMoviePhotos", throwable);
+                    ExceptionHandler.handleHttpException(mContext, (HttpException) throwable);
+
+                    mView.showEmptyView();
                 });
     }
 

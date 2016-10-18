@@ -31,7 +31,7 @@ public class PhotoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder holder = null;
+        RecyclerView.ViewHolder holder;
         if (viewType == TYPE_ITEM) {
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_photo_list, parent, false);
@@ -76,12 +76,7 @@ public class PhotoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PhotoPreviewActivity.actionStart(v.getContext(), mPhotos.get(getLayoutPosition()));
-                }
-            });
+            itemView.setOnClickListener(v -> PhotoPreviewActivity.actionStart(v.getContext(), mPhotos.get(getLayoutPosition())));
         }
     }
 

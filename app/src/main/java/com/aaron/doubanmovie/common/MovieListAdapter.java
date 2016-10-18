@@ -210,21 +210,18 @@ public class MovieListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Movie movie = mMovies.get(getLayoutPosition());
+            itemView.setOnClickListener(v -> {
+                Movie movie = mMovies.get(getLayoutPosition());
 
-                    List<Celebrity> celebrities = new ArrayList<>();
-                    celebrities.addAll(movie.getDirectors());
-                    celebrities.addAll(movie.getCasts());
+                List<Celebrity> celebrities = new ArrayList<>();
+                celebrities.addAll(movie.getDirectors());
+                celebrities.addAll(movie.getCasts());
 
-                    MovieDetailActivity.actionStart(itemView.getContext(),
-                            movie.getId(),
-                            movie.getTitle(),
-                            movie.getImages().getLarge(),
-                            celebrities);
-                }
+                MovieDetailActivity.actionStart(itemView.getContext(),
+                        movie.getId(),
+                        movie.getTitle(),
+                        movie.getImages().getLarge(),
+                        celebrities);
             });
         }
 

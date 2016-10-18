@@ -69,23 +69,13 @@ public class InListFragment extends BaseFragment implements InListFragmentPresen
     protected void initView() {
         super.initView();
 
-        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPresenter.fetchMovies(CITY);
-            }
-        });
+        mSwipe.setOnRefreshListener(() -> mPresenter.fetchMovies(CITY));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mListMovies.setLayoutManager(layoutManager);
 
         mAdapter.bindRecyclerView(mListMovies);
-        mAdapter.setOnLoadMoreListener(new MovieListAdapter.OnLoadMoreCallback() {
-            @Override
-            public void onLoadMore() {
-                mPresenter.fetchMoreMovies(CITY);
-            }
-        });
+        mAdapter.setOnLoadMoreListener(() -> mPresenter.fetchMoreMovies(CITY));
         mListMovies.setAdapter(mAdapter);
 
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);

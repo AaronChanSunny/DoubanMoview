@@ -16,9 +16,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import me.aaron.base.util.Logger;
 import me.aaron.dao.api.Api;
-import me.aaron.dao.api.gson.Top;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -71,23 +69,13 @@ public class TopListFragment extends BaseFragment {
         super.initView();
 
         mSwipe.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorPrimary, R.color.colorPrimaryDark);
-        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchMovies();
-            }
-        });
+        mSwipe.setOnRefreshListener(() -> fetchMovies());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mListMovies.setLayoutManager(layoutManager);
 
         mAdapter.bindRecyclerView(mListMovies);
-        mAdapter.setOnLoadMoreListener(new MovieListAdapter.OnLoadMoreCallback() {
-            @Override
-            public void onLoadMore() {
-                fetchMoreMovies();
-            }
-        });
+        mAdapter.setOnLoadMoreListener(() -> fetchMoreMovies());
 
         mListMovies.setAdapter(mAdapter);
 
@@ -101,22 +89,14 @@ public class TopListFragment extends BaseFragment {
                 mApi.getTop(0, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Top>() {
-                    @Override
-                    public void call(Top top) {
-                        logger.debug("swipe is " + mSwipe);
-                        mSwipe.setRefreshing(false);
-                        mProgressBar.setVisibility(View.GONE);
+                .subscribe(top -> {
+                    logger.debug("swipe is " + mSwipe);
+                    mSwipe.setRefreshing(false);
+                    mProgressBar.setVisibility(View.GONE);
 
-                        mAdapter.setMovies(top.getMovies());
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        logger.error(throwable);
-                    }
-                })
+                    mAdapter.setMovies(top.getMovies());
+                    mAdapter.notifyDataSetChanged();
+                }, logger::error)
         );
     }
 
@@ -130,23 +110,15 @@ public class TopListFragment extends BaseFragment {
         addSubscription(mApi.getTop(currentSize, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Top>() {
-                    @Override
-                    public void call(Top top) {
-                        mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
-                        mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
+                .subscribe(top -> {
+                    mAdapter.getMovies().remove(mAdapter.getMovies().size() - 1);
+                    mAdapter.notifyItemRemoved(mAdapter.getMovies().size());
 
-                        mAdapter.getMovies().addAll(top.getMovies());
-                        mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
+                    mAdapter.getMovies().addAll(top.getMovies());
+                    mAdapter.notifyItemRangeInserted(currentSize, currentSize + 20);
 
-                        mAdapter.setLoaded();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        logger.error(throwable);
-                    }
-                })
+                    mAdapter.setLoaded();
+                }, logger::error)
         );
     }
 }

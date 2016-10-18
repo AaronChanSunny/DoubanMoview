@@ -2,7 +2,6 @@ package me.aaron.dao.api.retrofit;
 
 import com.google.gson.JsonSyntaxException;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -36,24 +35,21 @@ public class ApiErrorAwareConverterFactory extends Converter.Factory {
                 mEmptyJsonConverterFactory.responseBodyConverter(type, annotations,
                         retrofit);
 
-        return new Converter<ResponseBody, Object>() {
-            @Override
-            public Object convert(ResponseBody value) throws IOException {
-                MediaType mediaType = value.contentType();
-                String stringBody = value.string();
+        return value -> {
+            MediaType mediaType = value.contentType();
+            String stringBody = value.string();
 
-                try {
-                    Object apiError = apiErrorConverter
-                            .convert(ResponseBody.create(mediaType, stringBody));
-                    if (apiError instanceof DoubanApiError && ((DoubanApiError) apiError).isApiError()) {
-                        throw (DoubanApiError) apiError;
-                    }
-                } catch (JsonSyntaxException notApiError) {
+            try {
+                Object apiError = apiErrorConverter
+                        .convert(ResponseBody.create(mediaType, stringBody));
+                if (apiError instanceof DoubanApiError && ((DoubanApiError) apiError).isApiError()) {
+                    throw (DoubanApiError) apiError;
                 }
-
-                // then create a new ResponseBody for normal body
-                return delegateConverter.convert(ResponseBody.create(mediaType, stringBody));
+            } catch (JsonSyntaxException notApiError) {
             }
+
+            // then create a new ResponseBody for normal body
+            return delegateConverter.convert(ResponseBody.create(mediaType, stringBody));
         };
     }
 }

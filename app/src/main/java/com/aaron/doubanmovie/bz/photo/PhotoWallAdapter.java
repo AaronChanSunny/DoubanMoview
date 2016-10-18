@@ -55,12 +55,7 @@ public class PhotoWallAdapter extends RecyclerView.Adapter<PhotoWallAdapter.View
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PhotoPreviewActivity.actionStart(v.getContext(), mPhotos.get(getLayoutPosition()));
-                }
-            });
+            itemView.setOnClickListener(v -> PhotoPreviewActivity.actionStart(v.getContext(), mPhotos.get(getLayoutPosition())));
         }
     }
 }

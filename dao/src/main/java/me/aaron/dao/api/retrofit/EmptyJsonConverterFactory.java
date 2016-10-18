@@ -1,6 +1,5 @@
 package me.aaron.dao.api.retrofit;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -27,11 +26,9 @@ public class EmptyJsonConverterFactory extends Converter.Factory {
     public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
         final Converter<ResponseBody, ?> delegateConverter = mGsonConverterFactory.responseBodyConverter(type, annotations, retrofit);
 
-        return new Converter<ResponseBody, Object>() {
-            @Override
-            public Object convert(ResponseBody value) throws IOException {
-                if (value.contentLength() == 0) return null;
-                return delegateConverter.convert(value);                }
+        return value -> {
+            if (value.contentLength() == 0) return null;
+            return delegateConverter.convert(value);
         };
     }
 }
