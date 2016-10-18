@@ -23,6 +23,8 @@ import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
 
+import static me.aaron.base.util.Utils.checkNotNull;
+
 /**
  * Created by aaronchan on 16/4/22.
  */
@@ -34,17 +36,19 @@ public class ApiImpl implements Api {
     private OkHttpClient mOkHttpClient;
 
     public ApiImpl(ApiService apiService, OkHttpClient okHttpClient) {
-        mApiService = apiService;
-        mOkHttpClient = okHttpClient;
+        mApiService = checkNotNull(apiService, "apiService == null");
+        mOkHttpClient = checkNotNull(okHttpClient, "okHttpClient == null");
     }
 
     @Override
     public Observable<InTheater> getInTheaters(String city, int start, int count) {
+        checkNotNull(city, "city == null");
         return mApiService.getInTheaters(city, start, count);
     }
 
     @Override
     public Observable<Movie> getMovie(String id) {
+        checkNotNull(id, "id == null");
         return mApiService.getMovie(id);
     }
 
@@ -60,6 +64,7 @@ public class ApiImpl implements Api {
 
     @Override
     public Observable<List<String>> getMoviePhotos(final String id, final int count) {
+        checkNotNull(id, "id == null");
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {

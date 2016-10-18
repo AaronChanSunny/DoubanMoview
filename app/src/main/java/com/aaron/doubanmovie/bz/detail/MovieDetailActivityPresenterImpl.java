@@ -15,6 +15,7 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static android.content.ContentValues.TAG;
+import static me.aaron.base.util.Utils.checkNotNull;
 
 /**
  * Created by Chenll on 2016/10/13.
@@ -27,9 +28,9 @@ public class MovieDetailActivityPresenterImpl implements MovieDetailActivityPres
     private CompositeSubscription mAllSubscription;
 
     public MovieDetailActivityPresenterImpl(Context context, IView view, Api api) {
-        mContext = context;
-        mView = view;
-        mApi = api;
+        mContext = checkNotNull(context, "context == null");
+        mView = checkNotNull(view, "view == null");
+        mApi = checkNotNull(api, "api == null");
 
         mAllSubscription = new CompositeSubscription();
     }

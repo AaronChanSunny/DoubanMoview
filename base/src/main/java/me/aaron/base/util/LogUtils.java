@@ -5,7 +5,11 @@ import android.util.Log;
 import me.aaron.base.BuildConfig;
 
 
-public class LogUtil {
+final class LogUtils {
+
+    private LogUtils() {
+    }
+
     /**
      * Prints given tag and text as debug log, only in debug builds.
      * @param tag - Tag to be set for logs

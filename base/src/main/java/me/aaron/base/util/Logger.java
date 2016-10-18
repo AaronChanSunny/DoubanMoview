@@ -2,11 +2,13 @@ package me.aaron.base.util;
 
 import java.io.Serializable;
 
-public class Logger implements Serializable {
+public final class Logger implements Serializable {
 
     private String tag;
 
-    private Logger() {}
+    private Logger() {
+
+    }
 
     public Logger(Class<?> cls) {
         this.tag = cls.getName();
@@ -31,7 +33,7 @@ public class Logger implements Serializable {
      * @param submitCrashReport
      */
     public void error(Throwable ex, boolean submitCrashReport) {
-        LogUtil.error(this.tag, ex.getMessage(), ex);
+        LogUtils.error(this.tag, ex.getMessage(), ex);
 
         /*if (submitCrashReport
                 && !BuildConfig.DEBUG
@@ -41,10 +43,10 @@ public class Logger implements Serializable {
     }
 
     public void warn(String log) {
-        LogUtil.warn(this.tag, log);
+        LogUtils.warn(this.tag, log);
     }
 
     public void debug(String log) {
-        LogUtil.debug(this.tag, log);
+        LogUtils.debug(this.tag, log);
     }
 }
