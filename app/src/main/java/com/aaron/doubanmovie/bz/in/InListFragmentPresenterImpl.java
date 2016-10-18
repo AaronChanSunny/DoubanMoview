@@ -6,7 +6,7 @@ import com.aaron.doubanmovie.common.ExceptionHandler;
 import com.aaron.doubanmovie.util.LogUtil;
 
 import me.aaron.dao.api.Api;
-import retrofit2.HttpException;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

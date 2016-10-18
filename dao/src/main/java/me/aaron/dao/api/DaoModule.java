@@ -14,9 +14,9 @@ import me.aaron.dao.api.retrofit.ApiErrorAwareConverterFactory;
 import me.aaron.dao.api.retrofit.EmptyJsonConverterFactory;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
-import retrofit2.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Chenll on 2016/10/13.

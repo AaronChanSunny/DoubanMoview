@@ -5,7 +5,8 @@ import android.widget.Toast;
 
 import com.aaron.doubanmovie.R;
 
-import retrofit2.HttpException;
+import retrofit2.adapter.rxjava.HttpException;
+
 
 /**
  * Created by aaronchan on 16/5/2.

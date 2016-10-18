@@ -17,7 +17,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import me.aaron.base.util.Logger;
 import me.aaron.dao.api.Api;
-import retrofit2.HttpException;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
