@@ -1,12 +1,15 @@
 package com.aaron.doubanmovie.bz.photo;
 
+import com.aaron.doubanmovie.common.Presenter;
+import com.aaron.doubanmovie.common.View;
+
 import java.util.List;
 
 /**
  * Created by Chenll on 2016/10/13.
  */
 
-public interface PhotoWallActivityPresenter {
+public interface PhotoWallActivityPresenter extends Presenter {
 
     /**
      * 获取所有的照片
@@ -14,19 +17,7 @@ public interface PhotoWallActivityPresenter {
      */
     void fetchAllPhotos(String id);
 
-    void onDestroy();
-
-    interface IView {
-        /**
-         * 显示进度条
-         */
-        void showProgressBar();
-
-        /**
-         * 隐藏进度条
-         */
-        void hideProgressBar();
-
+    interface IView extends View {
         /**
          * 显示照片墙
          * @param photos 所有照片

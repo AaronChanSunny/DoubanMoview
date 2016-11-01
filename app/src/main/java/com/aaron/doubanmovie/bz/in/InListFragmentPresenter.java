@@ -1,6 +1,9 @@
 package com.aaron.doubanmovie.bz.in;
 
 
+import com.aaron.doubanmovie.common.Presenter;
+import com.aaron.doubanmovie.common.View;
+
 import java.util.List;
 
 import me.aaron.dao.model.Movie;
@@ -9,25 +12,13 @@ import me.aaron.dao.model.Movie;
  * Created by Chenll on 2016/10/13.
  */
 
-public interface InListFragmentPresenter {
+public interface InListFragmentPresenter extends Presenter {
 
     void fetchMovies(String city);
 
     void fetchMoreMovies(String city);
 
-    void onDestroy();
-
-    interface IView {
-
-        /**
-         * 显示进度条
-         */
-        void showProgressBar();
-
-        /**
-         * 隐藏进度条
-         */
-        void hideProgressBar();
+    interface IView extends View {
 
         /**
          * 刷新列表

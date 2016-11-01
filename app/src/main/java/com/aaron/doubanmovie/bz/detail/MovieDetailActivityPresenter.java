@@ -1,12 +1,15 @@
 package com.aaron.doubanmovie.bz.detail;
 
+import com.aaron.doubanmovie.common.Presenter;
+import com.aaron.doubanmovie.common.View;
+
 import java.util.List;
 
 /**
  * Created by Chenll on 2016/10/13.
  */
 
-public interface MovieDetailActivityPresenter {
+public interface MovieDetailActivityPresenter extends Presenter {
 
     /**
      * 获取电影详情
@@ -21,12 +24,7 @@ public interface MovieDetailActivityPresenter {
      */
     void fetchMoviePhotos(String id, int count);
 
-    /**
-     * 销毁
-     */
-    void onDestroy();
-
-    interface IView {
+    interface IView extends View {
 
         /**
          * 展开剧情梗概
@@ -37,16 +35,6 @@ public interface MovieDetailActivityPresenter {
          * 缩起剧情梗概
          */
         void collapseSummaryText();
-
-        /**
-         * 显示进度条
-         */
-        void showProgressBar();
-
-        /**
-         * 隐藏进度条
-         */
-        void hideProgressBar();
 
         /**
          * 设置剧情梗概

@@ -65,6 +65,7 @@ public class ApiImpl implements Api {
     @Override
     public Observable<List<String>> getMoviePhotos(final String id, final int count) {
         checkNotNull(id, "id == null");
+
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
